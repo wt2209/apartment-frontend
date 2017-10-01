@@ -1,0 +1,41 @@
+.bottom-message{
+    height:90px;background-color: white;
+    border-top:1px #D2D6DE solid;
+}
+.search-nav{
+  margin: 8px 0 0;
+  padding:5px;
+  height: auto;
+  overflow: hidden;
+  border-radius: 3px;
+  background-color: white;
+  border:1px solid rgb(221, 221, 221);
+  clear: both;
+}
+.content{
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.footer{
+  padding: 10px 10px 0;
+  height: 100px;
+  width: 100%;
+}
+.footer-content{
+  background-color: white;
+  border: 1px solid #d2d6de;
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 500px) {
+  .navbar-custom-menu-disable {
+    display: none;
+  }
+  .main-header .logo {
+    display: none;
+  }
+  .main-sidebar {
+    padding-top: 50px;
+  }
+}
