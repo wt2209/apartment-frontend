@@ -32,10 +32,12 @@
   .navbar-custom-menu-disable {
     display: none;
   }
-  .main-header .logo {
-    display: none;
-  }
   .main-sidebar {
     padding-top: 50px;
+  }
+}
+@media (max-width: 767px) {
+  .main-header .logo {
+    display: none;
   }
 }

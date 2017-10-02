@@ -223,15 +223,17 @@
         </div>
         <div class="navbar-custom-menu pull-right">
           <ul class="nav navbar-nav">
+            <!-- Control Sidebar Toggle Button -->
             <li class="dropdown user user-menu pull-right" @click="logout">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <i class="fa">[退出]</i>
               </a>
             </li>
-            <!-- Control Sidebar Toggle Button -->
-            <!-- <li>
-              <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-            </li> -->
+            <li>
+              <a href="#" data-toggle="control-sidebar">
+                <i class="fa">[换肤]</i>
+              </a>
+            </li>
           </ul>
         </div>
       </nav>
@@ -256,22 +258,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
-</style>
+<style scoped></style>

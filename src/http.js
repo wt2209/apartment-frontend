@@ -47,7 +47,7 @@ const result = {
   }
 }
 
-/************拦截器*************/
+/******************************* 拦截器 ***********************************/
 // 拦截request,设置全局请求为ajax请求
 axios.interceptors.request.use((config) => {
   let token = sessionStorage.getItem('access_token')
