@@ -29,15 +29,26 @@ const result = {
               })
               .then(function(response) {
                 obj.success && obj.success(response)
+                Vue.prototype.$message({
+                  showClose: true,
+                  message: '成功',
+                  type: 'success'
+                });
                 // 不管请求成功与否，都会执行
                 obj.done && obj.done()
               })
               .catch((error) => {
                 if (error) {
+                  console.log(error)
                   obj.error && obj.error(error.response)
+                  let errorCode = 0
+                  if (error.response && error.response.status) {
+                    let errorCode =  error.response.status
+                  }
                   Vue.prototype.$notify.error({
-                    title: '错误: ' + obj.errorMsg || error.message,
-                    message: '错误代码：' + error.response.status
+                    title: '错误: ' + (obj.errorMsg || error.response.data.error || error.message),
+                    message: '错误代码：' + errorCode,
+                    duration: 0
                   })
                   obj.done && obj.done()
                 }
@@ -108,6 +119,10 @@ axios.interceptors.response.use((response) => {
       default:
         err.message = '未知错误'
     }
+  } else {
+    err.response = null
+    err.message = '未知错误'
+    err.response.status = 0
   }
   return Promise.reject(err)
 })

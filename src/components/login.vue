@@ -61,7 +61,7 @@ export default {
         error: (error) => {
           console.log(error)
         },
-        errorMsg: '登录失败',
+        errorMsg: '用户名或密码错误',
         done:()=>{
           this.buttonMsg = '登录'
           $('button[type=submit]').removeAttr('disabled')
