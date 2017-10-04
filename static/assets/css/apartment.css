@@ -27,7 +27,10 @@
   height: 100%;
   width: 100%;
 }
-
+.aaa ul{
+  height: 100%;
+  overflow: hidden;
+}
 @media (max-width: 500px) {
   .navbar-custom-menu-disable {
     display: none;

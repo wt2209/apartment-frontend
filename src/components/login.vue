@@ -46,13 +46,12 @@ export default {
     login() {
       this.buttonMsg = '验证中...'
       $('button[type=submit]').attr('disabled', 'disabled')
-      // console.log(appBaseURL)
       this.http.post({
         url: 'login',
         data: this.form,
         success: (response) => {
             sessionStorage.setItem('access_token', response.data.token)
-            sessionStorage.setItem('username', this.username)
+            sessionStorage.setItem('username', this.form.name)
             this.$router.push(this.$route.query.redirect || '/')
         },
         errorMsg: '用户名或密码错误',

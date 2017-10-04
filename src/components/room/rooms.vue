@@ -72,10 +72,10 @@
 export default {
     name: 'rooms',
     data() {
-        return {
-            tableData: [],
-            loading:true
-        }
+      return {
+        tableData: [],
+        loading:true
+      }
     },
     watch: {
         roomType(){

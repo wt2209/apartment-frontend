@@ -7,7 +7,8 @@ import AddNav from '@/components/dev/add-nav'
 
 // room module
 import Rooms from '@/components/room/rooms'
-
+// person module
+import People from '@/components/person/people'
 
 // bill module
 import Bills from '@/components/bill/bills'
@@ -33,7 +34,7 @@ const router = new Router({
     { path: '/rooms', name: 'rooms', component: Rooms, meta: { auth: true } },
 
     // person module
-    { path: '/people', name: 'people', component: Rooms, meta: { auth: true } },
+    { path: '/people', name: 'people', component: People, meta: { auth: true } },
 
 
     // bill module
@@ -47,8 +48,7 @@ const router = new Router({
 
 // navigation guards,  路由钩子，判定是否登录
 router.beforeEach((to, from, next) => {
-  next()
-  return
+
   if (to.path == '/login') {
     if (sessionStorage.getItem('access_token')) {
       next({path:'/',query: { redirect: to.query.redirect }})
