@@ -7,6 +7,7 @@ import AddNav from '@/components/dev/add-nav'
 
 // room module
 import Rooms from '@/components/room/rooms'
+import RoomTypes from '@/components/room/types'
 // person module
 import People from '@/components/person/people'
 
@@ -32,6 +33,7 @@ const router = new Router({
 
     // room module
     { path: '/rooms', name: 'rooms', component: Rooms, meta: { auth: true } },
+    { path: '/room-types', name: 'room-types', component: RoomTypes, meta: { auth: true } },
 
     // person module
     { path: '/people', name: 'people', component: People, meta: { auth: true } },
