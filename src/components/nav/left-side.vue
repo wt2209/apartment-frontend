@@ -45,7 +45,7 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                  <li v-for="item in nav.children"><a :href="item.url"><i class="fa fa-circle-o"></i>{{ item.display_name }}</a></li>
+                  <li v-for="item in nav.children"><a :href="'#'+item.url"><i class="fa fa-circle-o"></i>{{ item.display_name }}</a></li>
                 </ul>
               </li>
               <!-- <li class="treeview">

@@ -9,11 +9,11 @@
             <p class="login-box-msg" :click="login">登录系统</p>
             <form  @submit.prevent="login">
               <div class="form-group has-feedback">
-                <input type="username" class="form-control" placeholder="用户名" v-model:value="username">
+                <input type="username" class="form-control" placeholder="用户名" v-model:value="form.name">
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
               </div>
               <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="密码" v-model:value="password">
+                <input type="password" class="form-control" placeholder="密码" v-model:value="form.password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
               </div>
               <div class="row form-group has-error">
@@ -35,31 +35,25 @@ export default {
   name: 'login',
   data () {
     return {
-      username:'admin',
-      password:'admin888',
+      form: {
+        name:'admin',
+        password:'admin888'
+      },
       buttonMsg:'登录',
     }
   },
   methods: {
     login() {
+      this.buttonMsg = '验证中...'
+      $('button[type=submit]').attr('disabled', 'disabled')
       // console.log(appBaseURL)
-      this.http.get({
-        init:()=>{
-          this.buttonMsg = '验证中...'
-          $('button[type=submit]').attr('disabled', 'disabled')
-        },
+      this.http.post({
         url: 'login',
-        params: {
-          name: this.username,
-          password: this.password
-        },
+        data: this.form,
         success: (response) => {
-          sessionStorage.setItem('access_token', response.data.token)
-          sessionStorage.setItem('username', this.username)
-          this.$router.push('/')
-        },
-        error: (error) => {
-          console.log(error)
+            sessionStorage.setItem('access_token', response.data.token)
+            sessionStorage.setItem('username', this.username)
+            this.$router.push(this.$route.query.redirect || '/')
         },
         errorMsg: '用户名或密码错误',
         done:()=>{

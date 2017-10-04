@@ -92,7 +92,7 @@ export default {
             url: 'rooms',
             success: (res) => {
               this.loading = false
-              this.tableData = response.data
+              this.tableData = res.data
             }
           })
 

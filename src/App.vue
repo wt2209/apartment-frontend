@@ -2,13 +2,12 @@
     <div>
         <div v-if="isLogin()">
             <div class="wrapper">
-                 <top-nav></top-nav>
-                 <left-side></left-side>
-                   <div class="content-wrapper">
-                       <router-view></router-view>
-                   </div>
-                   <right-side></right-side>
-                 <!-- <bottom-nav></bottom-nav> -->
+              <top-nav></top-nav>
+              <left-side></left-side>
+              <right-side></right-side>
+              <div class="content-wrapper">
+                 <router-view></router-view>
+              </div>
             </div>
         </div>
         <div v-else>
@@ -21,18 +20,38 @@
 export default {
   name: 'app',
   data() {
-      return {
+    return {
 
-      }
+    }
   },
   methods: {
     isLogin() {
       return sessionStorage.getItem("access_token")
+    },
+    setup() {
+      this.getRoomStructure()
+    },
+    getRoomStructure() {
+      this.http.get({
+        url: 'room-structure',
+        success: (res) => {
+          sessionStorage.setItem('room-structure', JSON.stringify(res.data))
+        }
+      })
+    },
+    checkEnvironment() {
+      if (!window.sessionStorage) {
+        alert('浏览器版本太老！ 请更换火狐浏览器！')
+        return false
+      }
     }
   },
   mounted() {
-    // axios 加载 baseURL
-    this.axios.defaults.baseURL = this.appBaseURL
+    this.checkEnvironment()
+    // initialize app when user is login
+    if (this.isLogin()) {
+      this.setup()
+    }
   }
 }
 </script>

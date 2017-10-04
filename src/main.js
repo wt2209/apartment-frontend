@@ -8,7 +8,7 @@ import ElementUI from 'element-ui'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import 'element-ui/lib/theme-default/index.css'
-import AppConfig from './appConfig'
+import AppConfig from './app.config'
 import http from './http'
 
 import TopNav from './components/nav/top-nav'

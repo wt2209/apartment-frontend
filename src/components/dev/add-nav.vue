@@ -29,13 +29,9 @@
                 添加导航
               </div>
               <div class="panel-body">
-                <el-row>
-                  <el-col :span="8">
-                    <el-alert
-    title="成功提示的文案"
-    type="success">
-  </el-alert>
-                    <el-form ref="add-nav" :rules="rules" :model="form" label-width="140px" style="width:400px">
+                <div class="row">
+                  <div class="col-xs-4">
+                    <el-form ref="add-nav" :rules="rules" :model="form" label-width="100px">
                       <el-form-item label="name">
                         <el-input v-model="form.name"></el-input>
                       </el-form-item>
@@ -58,8 +54,8 @@
                         <el-button type="primary" @click="onSubmit('add-nav')">立即创建</el-button>
                       </el-form-item>
                     </el-form>
-                  </el-col>
-                  <el-col :span="16">
+                  </div>
+                  <div class="col-xs-8">
                     <p>现有导航：</p>
                     <el-tree
                       :data="tree"
@@ -69,8 +65,16 @@
                       highlight-current
                       :props="defaultProps">
                     </el-tree>
+                  </div>
+                </div>
+                <!-- <el-row  :gutter="40">
+                  <el-col :span="8">
+
                   </el-col>
-                </el-row>
+                  <el-col :span="16">
+
+                  </el-col>
+                </el-row> -->
               </div>
             </div>
           </div>

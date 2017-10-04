@@ -1,33 +1,60 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/hello'
-import Room from '@/components/room/room'
 import Login from '@/components/login'
+//develop environment
 import AddNav from '@/components/dev/add-nav'
+
+// room module
+import Rooms from '@/components/room/rooms'
+
+
+// bill module
+import Bills from '@/components/bill/bills'
+
+
+// not found
+import NotFound from '@/components/not-found'
 
 Vue.use(Router)
 
 const router = new Router({
   routes: [
-    //develop environment components
-    { path: '/add-nav', name: 'add-nav', component: AddNav, meta: { auth: true } },
-
     // login
     { path: '/login', name: 'login', component: Login },
+
     //   meta.auth : 是否需要登录
+
+    //develop environment components
+    { path: '/add-nav', name: 'add-nav', component: AddNav, meta: { auth: true } },
     { path: '/', name: 'hello', component: Hello, meta: { auth: true } },
-    { path: '/rooms', name: 'rooms', component: Room, meta: { auth: true } },
+
+    // room module
+    { path: '/rooms', name: 'rooms', component: Rooms, meta: { auth: true } },
+
+    // person module
+    { path: '/people', name: 'people', component: Rooms, meta: { auth: true } },
+
+
+    // bill module
+    { path: '/bills', name: 'bills', component: Bills, meta: { auth: true } },
+
+
+    // not found
+    { path: '*', name: 'not-found', component: NotFound, meta: { auth:true } },
   ]
 })
 
-// 路由钩子，判定是否登录
+// navigation guards,  路由钩子，判定是否登录
 router.beforeEach((to, from, next) => {
+  next()
+  return
   if (to.path == '/login') {
     if (sessionStorage.getItem('access_token')) {
       next({path:'/',query: { redirect: to.query.redirect }})
     }
   }
-  // 需要登录
+  // need login
   if (to.matched.some(record => record.meta.auth)) {
       if (sessionStorage.getItem('access_token')) {
           next()
