@@ -24,18 +24,9 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" v-loading="this.loading">
-              <li class="header">导航树</li>
-              <li class="treeview">
-                <a href="#">
-                  <i class="fa fa-dashboard"></i> <span>创建导航树</span>
-                    <span class="pull-right-container">
-                      <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                  <li><a href="#add-nav"><i class="fa fa-circle-o"></i>新增</a></li>
-                </ul>
-              </li>
+              <li class="header">概况</li>
+              <li><a href="#/info"><i class="fa fa-circle-o text-aqua"></i> <span>公寓概况</span></a></li>
+
               <li class="header">主导航</li>
               <li class="treeview" v-for="nav in this.navs">
                 <a href="#">

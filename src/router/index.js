@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/hello'
+import Info from '@/components/info'
 import Login from '@/components/login'
 //develop environment
 import AddNav from '@/components/dev/add-nav'
@@ -13,7 +14,7 @@ import People from '@/components/person/people'
 
 // bill module
 import Bills from '@/components/bill/bills'
-
+import AddBill from '@/components/bill/add-bill'
 
 // not found
 import NotFound from '@/components/not-found'
@@ -31,6 +32,9 @@ const router = new Router({
     { path: '/add-nav', name: 'add-nav', component: AddNav, meta: { auth: true } },
     { path: '/', name: 'hello', component: Hello, meta: { auth: true } },
 
+    // basic information of the department
+    { path: '/info', name: 'info', component: Info, meta: { auth: true } },
+
     // room module
     { path: '/rooms', name: 'rooms', component: Rooms, meta: { auth: true } },
     { path: '/room-types', name: 'room-types', component: RoomTypes, meta: { auth: true } },
@@ -41,6 +45,7 @@ const router = new Router({
 
     // bill module
     { path: '/bills', name: 'bills', component: Bills, meta: { auth: true } },
+    { path: '/add-bill', name: 'add-bill', component: AddBill, meta: { auth: true } },
 
 
     // not found
