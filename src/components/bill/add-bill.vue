@@ -59,9 +59,15 @@
                   <p>上缴总费用：<span>{{ turn_in_fees }}</span></p>
                   <p>
                     是否收取滞纳金：
-                    <el-switch v-model="value1" on-color="#13ce66" on-value="1" off-value="0" on-text="收取" off-text="不收"></el-switch>
+                    <el-switch v-model="form.late_fees_on" on-color="#13ce66" on-value="1" off-value="0" on-text="收取" off-text="不收"></el-switch>
                   </p>
-                  <div v-if="value1 == 1">
+                  <div v-if="form.late_fees_on == 1">
+                    <p>
+                      滞纳金基数：
+                      <span style="width:200px;display:inline-block;">
+                        <el-input placeholder="金额" v-model="form.late_fees_base"></el-input>
+                      </span>
+                    </p>
                     <p>
                       滞纳金费率：
                       <span style="width:200px;display:inline-block;">
@@ -71,19 +77,12 @@
                       </span>
                       （只精确到0.1%）
                     </p>
-                    <p>
-                      以 <el-select v-model="form.late_fees_base" placeholder="请选择">
-                          <el-option label="总金额" value="总金额"></el-option>
-                          <el-option v-for="item in form.items" :key="item.item" v-if="item.item" :label="item.item" :value="item.item"></el-option>
-                        </el-select>
-                      作为滞纳金基数
-                    </p>
-                    <p>滞纳金开始计算日：<el-date-picker type="date" placeholder="选择日期" style="width:200px;"></el-date-picker></p>
+                    <p>滞纳金开始计算日：<span><el-date-picker type="date" placeholder="选择日期" style="width:200px;"></el-date-picker></span></p>
                   </div>
                 </div>
               </div>
               <div class="panel-footer">
-                <button type="button" class="btn btn-success" @click="submit()">提交</button>
+                <button type="button" class="btn btn-success" id="submitButton"  @click="submit()">{{ buttonMsg }}</button>
               </div>
             </div>
           </div>
@@ -97,45 +96,34 @@ export default {
   name: 'add-bill',
   data () {
     return {
-      radio: '',
-      value1:false,
+      buttonMsg: '提 交',
       //fees 和 turn_in_fees 必须在后台重新算，因此不计入form
       fees: 0,
       turn_in_fees: 0,
-      // form.late_rate 必须乘100
+      // form.late_rate 必须除以100
       late_rate:0.3,
-
       form: {
         title: '',
         room: '',
         name: '',
-        late_fees_base: '总金额',
+        late_fees_on: 0,
+        late_fees_base: '',
         items: [{
           item: '',
           money: '',
           description: '',
           turn_in: true
-        },{
-          item: '',
-          money: '',
-          description: '',
-          turn_in: true
         }]
-      },
-      input:''
+      }
     }
   },
   watch:{
     'form.items': {
       handler: function(val, oldVal){
-        let changed = true
         // reset this.fees and this.turn_in_fees
         this.fees = 0
         this.turn_in_fees = 0
         for (let i of val) {
-          if (i.item === this.form.late_fees_base) {
-            changed = false
-          }
           // set this.fees and this.turn_in_fees
           if (i.item && Number.parseFloat(i.money)) {
             this.fees += Number.parseFloat(i.money)
@@ -143,9 +131,6 @@ export default {
               this.turn_in_fees += Number.parseFloat(i.money)
             }
           }
-        }
-        if (changed) {
-          this.form.late_fees_base = '总金额'
         }
       },
       deep: true
@@ -165,7 +150,39 @@ export default {
     },
     submit() {
       this.form.late_rate = this.late_rate / 1000
-      this.log(this.form.items)
+      this.buttonMsg = '提交中...'
+      $('#submitButton').attr('disabled', 'disabled')
+      this.http.post({
+        url: '/bill',
+        data: this.form,
+        successMsg: '添加成功',
+        success: (res) => {
+          this.log(res)
+        },
+        done: () => {
+          this.buttonMsg = '提 交'
+          $('#submitButton').removeAttr('disabled')
+          this.resetForm()
+        }
+      })
+    },
+    resetForm() {
+      this.form = {
+        late_fees_on: 0,
+        title: '',
+        room: '',
+        name: '',
+        late_fees_base: '',
+        items: [{
+          item: '',
+          money: '',
+          description: '',
+          turn_in: true
+        }]
+      },
+      this.fees = 0,
+      this.turn_in_fees = 0,
+      this.late_rate = 0.3
     }
   },
   mounted() {

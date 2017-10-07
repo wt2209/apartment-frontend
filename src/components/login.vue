@@ -6,7 +6,7 @@
           </div>
           <!-- /.login-logo -->
           <div class="login-box-body">
-            <p class="login-box-msg" :click="login">登录系统</p>
+            <p class="login-box-msg" :click="login">系统登录</p>
             <form  @submit.prevent="login">
               <div class="form-group has-feedback">
                 <input type="username" class="form-control" placeholder="用户名" v-model:value="form.name">

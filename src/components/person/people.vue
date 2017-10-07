@@ -1,8 +1,8 @@
 <template>
-  <div class="add-nav">
+  <div class="people">
       <section class="content-header">
         <h1>
-          这是模板
+          住户
           <!-- 刷新按钮 -->
           <!-- <small>&nbsp;&nbsp;&nbsp;<a class="pull-right glyphicon glyphicon-refresh" href="#rooms"></a></small> -->
         </h1>
@@ -10,742 +10,98 @@
           <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
           <li class="active">这是模板 </li>
         </ol>
-      <div class="search-nav">
-        <div class="col-md-3">
-          请选择：
-          <el-cascader
-            width="500px"
-            v-loading="roomStructureLoading"
-            :options="roomStructure"
-            v-model="selectedOptions2"
-            placeholder="选择楼号"
-            popper-class="cascader"
-            clearable
-            @change="handleChange">
-          </el-cascader>
-        </div>
-        <div class="col-md-3">
-          <el-input
-            placeholder="搜索"
-            icon="search"
-            v-model="input"
-            :on-icon-click="handleIconClick">
-          </el-input>
-        </div>
-
+        <div class="search-nav">
+          <div class="col-md-3">
+            请选择：
+            <el-cascader
+              width="500px"
+              v-loading="roomStructureLoading"
+              :options="roomStructure"
+              placeholder="选择楼号"
+              popper-class="cascader"
+              clearable
+              @change="selectChange">
+            </el-cascader>
+          </div>
+          <div class="col-md-3">
+            <el-input
+              placeholder="搜索"
+              icon="search"
+              v-model="search"
+              :on-icon-click="handleIconClick">
+            </el-input>
+          </div>
         </div>
       </section>
 
       <section class="content">
         <div class="container-fluid main-content">
-          <div class="row">
-            <div class="col-md-6">
-              <el-card class="room-card" :body-style="{ padding: '5px' }">
+          <div class="row" v-loading="loading">
+            <div class="col-md-6 room" v-for="room in rooms" :key="room.key">
+              <el-card class="room-card"
+                :body-style="{ padding: '5px' }">
                 <div slot="header">
-                  <span style="font-size:24px;">7-1-101</span>
+                  <span style="font-size:24px;">{{room.display_name}}</span>
                   <span style="margin-left:8px;">
-                    房间备注
+                    {{room.remark}}
                   </span>
                   <span class="pull-right">
                     <el-button type="text">房间记录</el-button>
                   </span>
                 </div>
                 <el-row>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row >
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-buttons">
-                        <button class="btn btn-warning btn-xs">退房</button>
-                        <button class="btn btn-success btn-xs">调房</button>
-                        <button class="btn btn-success btn-xs">修改</button>
-                        <button class="btn btn-danger btn-xs">删除</button>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <a href="#/add-person" class="person-add">
-                        <i class="el-icon-plus avatar-uploader-icon"></i>
-                      </a>
-                    </el-card>
-                  </el-col>
-                </el-row>
-              </el-card>
-            </div>
-            <div class="col-md-6">
-              <el-card class="room-card" :body-style="{ padding: '5px' }">
-                <div slot="header">
-                  <span style="font-size:24px;">7-1-101</span>
-                  <span style="margin-left:8px;">
-                    房间备注
-                  </span>
-                  <span class="pull-right">
-                    <el-button type="text">房间记录</el-button>
-                  </span>
-                </div>
-                <el-row>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row >
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-buttons">
-                        <button class="btn btn-warning btn-xs">退房</button>
-                        <button class="btn btn-success btn-xs">调房</button>
-                        <button class="btn btn-success btn-xs">修改</button>
-                        <button class="btn btn-danger btn-xs">删除</button>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <a href="#/add-person" class="person-add">
-                        <i class="el-icon-plus avatar-uploader-icon"></i>
-                      </a>
-                    </el-card>
-                  </el-col>
-                </el-row>
-              </el-card>
-            </div>
-            <div class="col-md-6">
-              <el-card class="room-card" :body-style="{ padding: '5px' }">
-                <div slot="header">
-                  <span style="font-size:24px;">7-1-101</span>
-                  <span style="margin-left:8px;">
-                    房间备注
-                  </span>
-                  <span class="pull-right">
-                    <el-button type="text">房间记录</el-button>
-                  </span>
-                </div>
-                <el-row>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row >
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-buttons">
-                        <button class="btn btn-warning btn-xs">退房</button>
-                        <button class="btn btn-success btn-xs">调房</button>
-                        <button class="btn btn-success btn-xs">修改</button>
-                        <button class="btn btn-danger btn-xs">删除</button>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <a href="#/add-person" class="person-add">
-                        <i class="el-icon-plus avatar-uploader-icon"></i>
-                      </a>
-                    </el-card>
-                  </el-col>
-                </el-row>
-              </el-card>
-            </div>
-            <div class="col-md-6">
-              <el-card class="room-card" :body-style="{ padding: '5px' }">
-                <div slot="header">
-                  <span style="font-size:24px;">7-1-101</span>
-                  <span style="margin-left:8px;">
-                    房间备注
-                  </span>
-                  <span class="pull-right">
-                    <el-button type="text">房间记录</el-button>
-                  </span>
-                </div>
-                <el-row>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row >
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-buttons">
-                        <button class="btn btn-warning btn-xs">退房</button>
-                        <button class="btn btn-success btn-xs">调房</button>
-                        <button class="btn btn-success btn-xs">修改</button>
-                        <button class="btn btn-danger btn-xs">删除</button>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <a href="#/add-person" class="person-add">
-                        <i class="el-icon-plus avatar-uploader-icon"></i>
-                      </a>
-                    </el-card>
-                  </el-col>
-                </el-row>
-              </el-card>
-            </div>
-            <div class="col-md-6">
-              <el-card class="room-card" :body-style="{ padding: '5px' }">
-                <div slot="header">
-                  <span style="font-size:24px;">7-1-101</span>
-                  <span style="margin-left:8px;">
-                    房间备注
-                  </span>
-                  <span class="pull-right">
-                    <el-button type="text">房间记录</el-button>
-                  </span>
-                </div>
-                <el-row>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row >
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-buttons">
-                        <button class="btn btn-warning btn-xs">退房</button>
-                        <button class="btn btn-success btn-xs">调房</button>
-                        <button class="btn btn-success btn-xs">修改</button>
-                        <button class="btn btn-danger btn-xs">删除</button>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <div class="person-name">
-                        张三 <span style="font-size:12px">(男， 硕士)</span>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5" >
-                          <el-col :span="12">
-                            <p>涂装工程部</p>
-                            <p>13963922214</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>入住时间</p>
-                            <p>2015-7-1</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="12">
-                            <p>租赁合同</p>
-                            <p>2013-7-31—2017-12-31</p>
-                          </el-col>
-                          <el-col :span="12">
-                            <p>劳动合同</p>
-                            <p>2013-7-31— 2017-12-31</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="person-detail">
-                        <el-row :gutter="5">
-                          <el-col :span="24">
-                            <p>备注：</p>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-card>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-card class="person-card" :body-style="{ padding: '5px' }">
-                      <a href="#/add-person" class="person-add">
-                        <i class="el-icon-plus avatar-uploader-icon"></i>
-                      </a>
-                    </el-card>
-                  </el-col>
+                    <el-col :xs="24" :sm="12" v-for="index in room.person_number" :key="room.people.key">
+                      <el-card class="person-card" v-if="room.people[index - 1]" :body-style="{ padding: '5px' }">
+                        <div class="person-name">
+                          {{ room.people[index - 1].name }}
+                          <span style="font-size:12px">
+                            ({{room.people[index - 1].gender}}<span v-if="room.people[index - 1].education">， 硕士</span>)
+                          </span>
+                        </div>
+                        <div class="person-detail">
+                          <el-row :gutter="5" >
+                            <el-col :span="12">
+                              <p>{{room.people[index - 1].department}}</p>
+                              <p>{{room.people[index - 1].phone_number}}</p>
+                            </el-col>
+                            <el-col :span="12">
+                              <p>入住时间</p>
+                              <p>{{room.people[index - 1].checkin_at}}</p>
+                            </el-col>
+                          </el-row>
+                        </div>
+                        <div class="person-detail" v-if="room.people[index - 1].rent_start_date">
+                          <el-row :gutter="5">
+                            <el-col :span="12">
+                              <p>租赁合同</p>
+                              <p>{{room.people[index - 1].rent_start_date}} — {{room.people[index - 1].rent_end_date}}</p>
+                            </el-col>
+                            <el-col :span="12">
+                              <p>劳动合同</p>
+                              <p>{{room.people[index - 1].contract_start_date}} — {{room.people[index - 1].contract_end_date}}</p>
+                            </el-col>
+                          </el-row>
+                        </div>
+                        <div class="person-detail">
+                          <el-row >
+                            <el-col :span="24">
+                              <p>备注：</p>{{room.people[index - 1].remark}}
+                            </el-col>
+                          </el-row>
+                        </div>
+                        <div class="person-buttons">
+                          <button class="btn btn-warning btn-xs">退房</button>
+                          <button class="btn btn-success btn-xs">调房</button>
+                          <button class="btn btn-success btn-xs">修改</button>
+                          <button class="btn btn-danger btn-xs">删除</button>
+                        </div>
+                      </el-card>
+                      <el-card  v-else class="person-card" :body-style="{ padding: '5px' }">
+                        <a href="#/add-person" class="person-add">
+                          <i class="el-icon-plus avatar-uploader-icon"></i>
+                        </a>
+                      </el-card>
+                    </el-col>
                 </el-row>
               </el-card>
             </div>
@@ -753,35 +109,47 @@
         </div>
 
       </section>
-      <div class="footer">
-        <div class="footer-content">
-
-        </div>
-      </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'add-nav',
+  name: 'people',
   data () {
     return {
+      loading: false,
       roomStructureLoading: false,
-      msg:'',
-      input:'',
-      types:'',
-      building:'',
-      unit:'',
+      rooms: [],
+      search:'',
       roomStructure: [],
-      selectedOptions2: []
     }
   },
   methods: {
     handleIconClick() {
 
     },
-    handleChange(value) {
-      console.log(value);
+    selectChange(value) {
+      if (value.length < 3) {
+        return
+      }
+      const option = {
+        typeId: value[0],
+        building: value[1],
+        unit: value[2]
+      }
+      this.loading = true,
+      this.http.get({
+        url: 'people',
+        params: option,
+        success: (res) => {
+          this.rooms = res.data
+        },
+        done: ()=>{
+          this.loading = false
+        }
+      })
+
+      this.log(value);
     },
     getRoomStructure() {
       if (!sessionStorage.getItem('room-structure')) {
@@ -791,13 +159,13 @@ export default {
           success: (res) => {
             this.roomStructure = res.data
             this.roomStructureLoading = false
-            // $('.el-cascader').trigger('click')
+            $('.el-cascader').trigger('click')
             sessionStorage.setItem('room-structure', JSON.stringify(res.data))
           }
         })
       } else {
         this.roomStructure = JSON.parse(sessionStorage.getItem('room-structure'))
-        // $('.el-cascader').trigger('click')
+        $('.el-cascader').trigger('click')
       }
     }
   },
@@ -826,8 +194,16 @@ export default {
     background-color: rgb(93, 173, 226);
     /*background-color: #eeeeee;*/
   }
+  .row{
+    min-height: 200px;
+  }
+  .person{
+    height: auto;
+    overflow: hidden;
+  }
   .el-row .el-col:nth-child(odd){
     clear: both;
+    /*background-color: red;*/
   }
   .person-name{
     font-size: 16px;
@@ -852,9 +228,9 @@ export default {
   .person-add{
     display: block;
     cursor: pointer;
-    line-height: 100px;
+    line-height: 131px;
     text-align: center;
-    font-size: 36px;
+    font-size: 42px;
   }
   .person-add i{
     color:gray;
