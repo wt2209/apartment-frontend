@@ -13,24 +13,15 @@
       </section>
 
       <section class="content">
-
         <div class="row">
-                <div class="col-lg-3 col-xs-6">
+                <div class="col-md-4 col-xs-12">
                   <!-- small box -->
-                  <div class="small-box bg-aqua">
-                    <div class="inner">
-                      <h3>150</h3>
+                  <div class="small-box" id="mm" style="height:300px;width:100%">
 
-                      <p>New Orders</p>
-                    </div>
-                    <div class="icon">
-                      <i class="ion ion-bag"></i>
-                    </div>
-                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                   </div>
                 </div>
                 <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
+                <div class="col-md-4 col-xs-12">
                   <!-- small box -->
                   <div class="small-box bg-green">
                     <div class="inner">
@@ -45,7 +36,7 @@
                   </div>
                 </div>
                 <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
+                <div class="col-md-4 col-xs-12">
                   <!-- small box -->
                   <div class="small-box bg-yellow">
                     <div class="inner">
@@ -55,21 +46,6 @@
                     </div>
                     <div class="icon">
                       <i class="ion ion-person-add"></i>
-                    </div>
-                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                  </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                  <!-- small box -->
-                  <div class="small-box bg-red">
-                    <div class="inner">
-                      <h3>65</h3>
-
-                      <p>Unique Visitors</p>
-                    </div>
-                    <div class="icon">
-                      <i class="ion ion-pie-graph"></i>
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                   </div>
@@ -510,6 +486,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'add-nav',
   data () {
@@ -519,9 +496,93 @@ export default {
     }
   },
   methods: {
+    charts() {
+      console.log(document.querySelector('#mm'))
+             var myChart = echarts.init(document.querySelector('#mm'));
+            //  console.log(myChart)
+
+             // 指定图表的配置项和数据
+             var option = {
+                 tooltip: {
+                     trigger: 'item',
+                     formatter: "{a} <br/>{b}: {c} ({d}%)"
+                 },
+                 legend: {
+                     orient: 'vertical',
+                     x: 'left',
+                     data:['直达','营销广告','搜索引擎']
+                 },
+                 series: [
+                     {
+                         name:'访问来源',
+                         type:'pie',
+                         selectedMode: 'single',
+                         radius: [0, '70%'],
+
+                         label: {
+                             normal: {
+                                  formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                                  backgroundColor: '#eee',
+                                  borderColor: '#aaa',
+                                  borderWidth: 1,
+                                  borderRadius: 4,
+                                  // shadowBlur:3,
+                                  // shadowOffsetX: 2,
+                                  // shadowOffsetY: 2,
+                                  // shadowColor: '#999',
+                                  // padding: [0, 7],
+                                  rich: {
+                                      a: {
+                                          color: '#999',
+                                          lineHeight: 22,
+                                          align: 'center'
+                                      },
+                                      // abg: {
+                                      //     backgroundColor: '#333',
+                                      //     width: '100%',
+                                      //     align: 'right',
+                                      //     height: 22,
+                                      //     borderRadius: [4, 4, 0, 0]
+                                      // },
+                                      hr: {
+                                          borderColor: '#aaa',
+                                          width: '100%',
+                                          borderWidth: 0.5,
+                                          height: 0
+                                      },
+                                      b: {
+                                          fontSize: 16,
+                                          lineHeight: 33
+                                      },
+                                      per: {
+                                          color: '#eee',
+                                          backgroundColor: '#334455',
+                                          padding: [2, 4],
+                                          borderRadius: 2
+                                      }
+                                  }
+                              }
+                         },
+                         labelLine: {
+                             normal: {
+                                 show: true
+                             }
+                         },
+                         data:[
+                             {value:335, name:'直达'},
+                             {value:679, name:'营销广告'},
+                             {value:1548, name:'搜索引擎'}
+                         ]
+                     }
+                 ]
+             };
+
+             // 使用刚指定的配置项和数据显示图表。
+             myChart.setOption(option);
+    }
   },
   mounted() {
-
+    this.charts()
   }
 }
 </script>
