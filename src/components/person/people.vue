@@ -8,7 +8,7 @@
         </h1>
         <ol class="breadcrumb">
           <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
-          <li class="active">这是模板 </li>
+          <li class="active">住户 </li>
         </ol>
         <div class="search-nav">
           <div class="col-md-3">
@@ -17,18 +17,19 @@
               width="500px"
               v-loading="roomStructureLoading"
               :options="roomStructure"
+              v-model="selectedOption"
               placeholder="选择楼号"
               popper-class="cascader"
               clearable
               @change="selectChange">
             </el-cascader>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3"@keyup.enter="search">
             <el-input
               placeholder="搜索"
               icon="search"
-              v-model="search"
-              :on-icon-click="handleIconClick">
+              v-model="searchInput"
+              :on-icon-click="search">
             </el-input>
           </div>
         </div>
@@ -37,11 +38,15 @@
       <section class="content">
         <div class="container-fluid main-content">
           <div class="row" v-loading="loading">
-            <div class="col-md-6 room" v-for="room in rooms" :key="room.key">
+            <div class="col-md-6 room"
+              v-for="room in rooms"
+              :key="room.key">
               <el-card class="room-card"
                 :body-style="{ padding: '5px' }">
                 <div slot="header">
-                  <span style="font-size:24px;">{{room.display_name}}</span>
+                  <span style="font-size:24px;cursor:pointer" @click="searchRoom">
+                    {{room.display_name}}
+                  </span>
                   <span style="margin-left:8px;">
                     {{room.remark}}
                   </span>
@@ -105,7 +110,9 @@
                 </el-row>
               </el-card>
             </div>
+            <div v-if="rooms.length == 0" class="no-data">{{ noDataMsg }}</div>
           </div>
+
         </div>
 
       </section>
@@ -118,38 +125,53 @@ export default {
   data () {
     return {
       loading: false,
+      noDataMsg: '',
       roomStructureLoading: false,
       rooms: [],
-      search:'',
+      searchInput:'',
+      selectedOption: [],
       roomStructure: [],
     }
   },
   methods: {
-    handleIconClick() {
-
-    },
-    selectChange(value) {
-      if (value.length < 3) {
-        return
-      }
-      const option = {
-        typeId: value[0],
-        building: value[1],
-        unit: value[2]
-      }
+    fetchData(params) {
       this.loading = true,
       this.http.get({
         url: 'people',
-        params: option,
+        params: params,
         success: (res) => {
+          if (res.data.length == 0) {
+            this.noDataMsg = '没有找到相关人员'
+          } else {
+            this.noDataMsg = ''
+          }
           this.rooms = res.data
         },
         done: ()=>{
           this.loading = false
         }
       })
-
-      this.log(value);
+    },
+    search() {
+      if (this.searchInput) {
+        this.selectedOption = []
+        this.fetchData({search: this.searchInput})
+      }
+    },
+    searchRoom(event) {
+      this.searchInput = event.target.innerText
+      this.search({search: this.searchInput})
+    },
+    selectChange(value) {
+      if (value.length == 3) {
+        this.searchInput = ''
+        const option = {
+          type: value[0],
+          building: value[1],
+          unit: value[2]
+        }
+        this.fetchData(option)
+      }
     },
     getRoomStructure() {
       if (!sessionStorage.getItem('room-structure')) {
@@ -196,6 +218,13 @@ export default {
   }
   .row{
     min-height: 200px;
+  }
+  .row .no-data{
+    line-height: 100px;
+    font-size: 22px;
+    color: #999;
+    font-weight: normal;
+    text-align: center;
   }
   .person{
     height: auto;

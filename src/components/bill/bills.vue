@@ -15,8 +15,8 @@
             <el-input
               placeholder="搜索"
               icon="search"
-              v-model="search"
-              :on-icon-click="handleIconClick">
+              v-model="searchInput"
+              :on-icon-click="search">
             </el-input>
           </div>
         </div>
@@ -109,7 +109,7 @@ export default {
   name: 'bills',
   data () {
     return {
-      search: '',
+      searchInput: '',
       initLoading: true,
       table: [],
       tableHeight:0,
@@ -119,7 +119,7 @@ export default {
     handleClick(row) {
       console.log(row.fees);
     },
-    handleIconClick(){
+    search(){
 
     },
     fetchData() {
