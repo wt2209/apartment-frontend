@@ -11,8 +11,7 @@
           <li class="active">住户 </li>
         </ol>
         <div class="search-nav">
-          <div class="col-md-3">
-            请选择：
+          <div class="pull-left" style="margin-right: 50px;">
             <el-cascader
               width="500px"
               v-loading="roomStructureLoading"
@@ -24,13 +23,45 @@
               @change="selectChange">
             </el-cascader>
           </div>
-          <div class="col-md-3"@keyup.enter="search">
+          <div class="pull-left" style="margin-right: 50px;" @keyup.enter="searchByInput">
             <el-input
               placeholder="搜索"
               icon="search"
               v-model="searchInput"
-              :on-icon-click="search">
+              :on-icon-click="searchByInput">
             </el-input>
+          </div>
+          <div class="pull-left">
+            <el-form :inline="true" :rules="rules" :model="rentDateSearchOption">
+              <el-form-item>
+                <el-checkbox v-model="rentDateSearchOn">租期搜索&nbsp;&nbsp;&nbsp;</el-checkbox>
+              </el-form-item>
+              <el-form-item v-if="rentDateSearchOn" prop="startDate">
+                <el-select v-model="rentDateSearchOption.dateType" style="width:115px;">
+                  <el-option label="租赁开始日" value="start"></el-option>
+                  <el-option label="租赁结束日" value="end"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item v-if="rentDateSearchOn" prop="startDate">
+                <el-date-picker
+                  v-model="rentDateSearchOption.startDate"
+                  type="date"
+                  style="width:125px;"
+                  placeholder="开始日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item v-if="rentDateSearchOn" prop="endDate">
+                <el-date-picker
+                 style="width:125px;"
+                  v-model="rentDateSearchOption.endDate"
+                  type="date"
+                  placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item v-if="rentDateSearchOn">
+                <el-button icon="search" type="primary" @click="searchByDate">查询</el-button>
+              </el-form-item>
+            </el-form>
           </div>
         </div>
       </section>
@@ -55,7 +86,7 @@
                   </span>
                 </div>
                 <el-row>
-                    <el-col :xs="24" :sm="12" v-for="index in room.person_number" :key="room.people.key">
+                    <el-col :xs="24" :sm="room.person_number > 1 ? 12 : 24" v-for="index in room.person_number" :key="room.people.key">
                       <el-card class="person-card" v-if="room.people[index - 1]" :body-style="{ padding: '5px' }">
                         <div class="person-name">
                           {{ room.people[index - 1].name }}
@@ -101,10 +132,10 @@
                           <button class="btn btn-danger btn-xs">删除</button>
                         </div>
                       </el-card>
-                      <el-card  v-else class="person-card" :body-style="{ padding: '5px' }">
-                        <a href="#/add-person" class="person-add">
+                      <el-card v-else class="person-card" :body-style="{ padding: '5px' }">
+                        <router-link :to="{ name: 'add-person', params: { id: room.id}}" class="person-add">
                           <i class="el-icon-plus avatar-uploader-icon"></i>
-                        </a>
+                        </router-link>
                       </el-card>
                     </el-col>
                 </el-row>
@@ -112,10 +143,16 @@
             </div>
             <div v-if="rooms.length == 0" class="no-data">{{ noDataMsg }}</div>
           </div>
-
         </div>
-
       </section>
+
+      <div class="footer">
+        <div class="footer-content">
+          <p v-if="peopleCount || roomCount">
+            共计 {{ peopleCount }} 人，{{ roomCount }} 个房间
+          </p>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -123,14 +160,61 @@
 export default {
   name: 'people',
   data () {
+    //date1 > date2
+    const bigger = (date1, date2) => {
+      const d1 = new Date(date1)
+      const d2 = new Date(date2)
+      return d1 > d2 || d1 == d2
+    }
+    // const isDate = (rule, value, callback) => {
+    //   if (value != '') {
+    //     this.log(value.toString())
+    //     if (new Date(value).getDate() != value.substring(value.length-2)) {
+    //       callback(new Error('请输入一个日期'))
+    //     }
+    //   }
+    //   callback()
+    // }
+    const validateEndDate = (rule, value, callback) => {
+      if (this.rentDateSearchOption.startDate != '') {
+        if (bigger(this.rentDateSearchOption.startDate, value)) {
+          callback(new Error('结束日期小于开始日期'))
+        }
+      }
+      callback()
+    }
+    const validateStartDate = (rule, value, callback) => {
+      if (this.rentDateSearchOption.endDate != '') {
+        if (bigger(value, this.rentDateSearchOption.endDate)) {
+          callback(new Error('开始日期大于结束日期'))
+        }
+      }
+      callback()
+    }
     return {
       loading: false,
       noDataMsg: '',
       roomStructureLoading: false,
       rooms: [],
+      peopleCount: 0,
+      roomCount: 0,
       searchInput:'',
+      rentDateSearchOn: false,
+      rentDateSearchOption: {
+        dateType: 'start',
+        startDate:'',
+        endDate:''
+      },
       selectedOption: [],
       roomStructure: [],
+      rules:{
+        startDate: [
+          { validator: validateStartDate, trigger: 'change' }
+        ],
+        endDate: [
+          { validator: validateEndDate, trigger: 'change' }
+        ]
+      }
     }
   },
   methods: {
@@ -140,22 +224,31 @@ export default {
         url: 'people',
         params: params,
         success: (res) => {
-          if (res.data.length == 0) {
+          if (res.data.people.length == 0) {
             this.noDataMsg = '没有找到相关人员'
           } else {
             this.noDataMsg = ''
           }
-          this.rooms = res.data
+          this.rooms = res.data.people
+          this.peopleCount = res.data.peopleCount
+          this.roomCount = res.data.roomCount
         },
         done: ()=>{
           this.loading = false
         }
       })
     },
-    search() {
+    searchByInput() {
       if (this.searchInput) {
+        this.rentDateSearchOn = false
         this.selectedOption = []
         this.fetchData({search: this.searchInput})
+      }
+    },
+    searchByDate() {
+      if (this.rentDateSearchOption.startDate != ''
+            && this.rentDateSearchOption.endDate != '') {
+        this.fetchData(this.rentDateSearchOption)
       }
     },
     searchRoom(event) {
@@ -165,6 +258,7 @@ export default {
     selectChange(value) {
       if (value.length == 3) {
         this.searchInput = ''
+        this.rentDateSearchOn = false
         const option = {
           type: value[0],
           building: value[1],
@@ -205,6 +299,16 @@ export default {
     font-weight: normal;
     margin:0;
   }
+  .search-nav{
+    padding: 10px 15px 16px;
+  }
+  .rent-date-search{
+    height: 100%;
+    vertical-align: middle;
+  }
+  .el-form-item{
+    margin: 0 ;
+  }
   .main-content{
     max-width: 1200px;
   }
@@ -230,6 +334,7 @@ export default {
     height: auto;
     overflow: hidden;
   }
+  .row .room:nth-child(odd),
   .el-row .el-col:nth-child(odd){
     clear: both;
     /*background-color: red;*/

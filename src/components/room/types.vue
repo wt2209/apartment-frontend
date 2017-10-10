@@ -27,7 +27,7 @@
                   </div>
                 </div>
                 <div class="panel-footer">
-                  <router-link :to="'type/edit/' + type.id"  class="btn btn-success btn-xs">修改</router-link>
+                  <router-link :to="{ name: 'type-edit', params: {id: type.id} }"  class="btn btn-success btn-xs">修改</router-link>
                   <button class="btn btn-danger btn-xs">删除</button>
                 </div>
               </div>

@@ -12,6 +12,7 @@ import RoomTypes from '@/components/room/types'
 import RoomTypeEdit from '@/components/room/type-edit'
 // person module
 import People from '@/components/person/people'
+import AddPerson from '@/components/person/add-person'
 
 // bill module
 import Bills from '@/components/bill/bills'
@@ -43,6 +44,7 @@ const router = new Router({
 
     // person module
     { path: '/people', name: 'people', component: People, meta: { auth: true } },
+    { path: '/add-person/:id', name: 'add-person', component: AddPerson, props: true, meta: { auth: true } },
 
 
     // bill module
