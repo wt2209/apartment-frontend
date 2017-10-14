@@ -218,8 +218,8 @@ export default {
       this.loading = true
       this.http.get({
         url: 'navigations',
-        success: (res) => {
-          this.navs = res.data
+        success: (result) => {
+          this.navs = result.data
         },
         errorMsg: '获取导航数据失败',
         done: ()=>{

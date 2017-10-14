@@ -1,17 +1,13 @@
 <template>
   <div class="people">
       <section class="content-header">
-        <h1>
-          住户
-          <!-- 刷新按钮 -->
-          <!-- <small>&nbsp;&nbsp;&nbsp;<a class="pull-right glyphicon glyphicon-refresh" href="#rooms"></a></small> -->
-        </h1>
+        <h1>住户</h1>
         <ol class="breadcrumb">
           <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
           <li class="active">住户 </li>
         </ol>
         <div class="search-nav">
-          <div class="pull-left" style="margin-right: 50px;">
+          <div class="pull-left" style="margin-right: 68px;">
             <el-cascader
               width="500px"
               v-loading="roomStructureLoading"
@@ -23,7 +19,7 @@
               @change="selectChange">
             </el-cascader>
           </div>
-          <div class="pull-left" style="margin-right: 50px;" @keyup.enter="searchByInput">
+          <div class="pull-left" style="margin-right: 68px;" @keyup.enter="searchByInput">
             <el-input
               placeholder="搜索"
               icon="search"
@@ -36,24 +32,24 @@
               <el-form-item>
                 <el-checkbox v-model="rentDateSearchOn">租期搜索&nbsp;&nbsp;&nbsp;</el-checkbox>
               </el-form-item>
-              <el-form-item v-if="rentDateSearchOn" prop="startDate">
-                <el-select v-model="rentDateSearchOption.dateType" style="width:115px;">
+              <el-form-item v-if="rentDateSearchOn" prop="date_type">
+                <el-select v-model="rentDateSearchOption.date_type" style="width:115px;">
                   <el-option label="租赁开始日" value="start"></el-option>
                   <el-option label="租赁结束日" value="end"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item v-if="rentDateSearchOn" prop="startDate">
+              <el-form-item v-if="rentDateSearchOn" prop="start_date">
                 <el-date-picker
-                  v-model="rentDateSearchOption.startDate"
+                  v-model="rentDateSearchOption.start_date"
                   type="date"
                   style="width:125px;"
                   placeholder="开始日期">
                 </el-date-picker>
               </el-form-item>
-              <el-form-item v-if="rentDateSearchOn" prop="endDate">
+              <el-form-item v-if="rentDateSearchOn" prop="end_date">
                 <el-date-picker
                  style="width:125px;"
-                  v-model="rentDateSearchOption.endDate"
+                  v-model="rentDateSearchOption.end_date"
                   type="date"
                   placeholder="结束日期">
                 </el-date-picker>
@@ -70,8 +66,8 @@
         <div class="container-fluid main-content">
           <div class="row" v-loading="loading">
             <div class="col-md-6 room"
-              v-for="room in rooms"
-              :key="room.key">
+              v-for="(room, roomIndex) in rooms"
+              :key="room.id">
               <el-card class="room-card"
                 :body-style="{ padding: '5px' }">
                 <div slot="header">
@@ -86,42 +82,42 @@
                   </span>
                 </div>
                 <el-row>
-                    <el-col :xs="24" :sm="room.person_number > 1 ? 12 : 24" v-for="index in room.person_number" :key="room.people.key">
-                      <el-card class="person-card" v-if="room.people[index - 1]" :body-style="{ padding: '5px' }">
+                    <el-col :xs="24" :sm="room.person_number > 1 ? 12 : 24" v-for="i in room.person_number" :key="i">
+                      <el-card class="person-card" v-if="room.people[i - 1]" :body-style="{ padding: '5px' }">
                         <div class="person-name">
-                          {{ room.people[index - 1].name }}
+                          {{ room.people[i - 1].name }}
                           <span style="font-size:12px">
-                            ({{room.people[index - 1].gender}}<span v-if="room.people[index - 1].education">， 硕士</span>)
+                            ({{room.people[i - 1].gender}}<span v-if="room.people[i - 1].education">， 硕士</span>)
                           </span>
                         </div>
                         <div class="person-detail">
                           <el-row :gutter="5" >
                             <el-col :span="12">
-                              <p>{{room.people[index - 1].department}}</p>
-                              <p>{{room.people[index - 1].phone_number}}</p>
+                              <p>{{room.people[i - 1].department}}</p>
+                              <p>{{room.people[i - 1].phone_number}}</p>
                             </el-col>
                             <el-col :span="12">
                               <p>入住时间</p>
-                              <p>{{room.people[index - 1].checkin_at}}</p>
+                              <p>{{room.people[i - 1].checkin_at}}</p>
                             </el-col>
                           </el-row>
                         </div>
-                        <div class="person-detail" v-if="room.people[index - 1].rent_start_date">
+                        <div class="person-detail" v-if="room.people[i - 1].rent_start_date">
                           <el-row :gutter="5">
                             <el-col :span="12">
                               <p>租赁合同</p>
-                              <p>{{room.people[index - 1].rent_start_date}} — {{room.people[index - 1].rent_end_date}}</p>
+                              <p>{{room.people[i - 1].rent_start_date}} — {{room.people[i - 1].rent_end_date}}</p>
                             </el-col>
                             <el-col :span="12">
                               <p>劳动合同</p>
-                              <p>{{room.people[index - 1].contract_start_date}} — {{room.people[index - 1].contract_end_date}}</p>
+                              <p>{{room.people[i - 1].contract_start_date}} — {{room.people[i - 1].contract_end_date}}</p>
                             </el-col>
                           </el-row>
                         </div>
                         <div class="person-detail">
                           <el-row >
                             <el-col :span="24">
-                              <p>备注：</p>{{room.people[index - 1].remark}}
+                              <p>备注：</p>{{room.people[i - 1].remark}}
                             </el-col>
                           </el-row>
                         </div>
@@ -133,9 +129,9 @@
                         </div>
                       </el-card>
                       <el-card v-else class="person-card" :body-style="{ padding: '5px' }">
-                        <router-link :to="{ name: 'add-person', params: { id: room.id}}" class="person-add">
+                        <div class="person-add" @click="addPerson(roomIndex)">
                           <i class="el-icon-plus avatar-uploader-icon"></i>
-                        </router-link>
+                        </div>
                       </el-card>
                     </el-col>
                 </el-row>
@@ -153,6 +149,85 @@
           </p>
         </div>
       </div>
+
+      <el-dialog title="人员入住" :visible.sync="checkinFormVisible">
+        <div class="row" v-loading="getRoomLoading">
+          <div class="col-md-6">
+            <el-form :model="person"  label-position="left">
+              <el-form-item label="房间号" label-width="68px">
+                {{ personMeta.room }} — {{ personMeta.room_type }}
+              </el-form-item>
+              <el-form-item label="姓名" label-width="68px">
+                <el-input v-model="person.name"></el-input>
+              </el-form-item>
+              <el-form-item label="性别" label-width="68px">
+                <el-radio class="radio" v-model="person.gender" label="男">男</el-radio>
+                <el-radio class="radio" v-model="person.gender" label="女">女</el-radio>
+              </el-form-item>
+              <el-form-item label="学历" label-width="68px">
+                <el-radio-group v-model="person.education" size="small">
+                 <el-radio-button label="专科"></el-radio-button>
+                 <el-radio-button label="本科"></el-radio-button>
+                 <el-radio-button label="硕士"></el-radio-button>
+                 <el-radio-button label="博士"></el-radio-button>
+                 <el-radio-button label="其他"></el-radio-button>
+               </el-radio-group>
+              </el-form-item>
+              <el-form-item label="部门" label-width="68px">
+                <el-input v-model="person.department" ></el-input>
+              </el-form-item>
+              <el-form-item label="身份证号" label-width="68px">
+                <el-input v-model="person.identify" ></el-input>
+              </el-form-item>
+              <el-form-item label="入住时间" label-width="68px">
+                <el-input v-model="person.checkin_at" ></el-input>
+              </el-form-item>
+              <el-form-item label="电话" label-width="68px">
+                <el-input v-model="person.phone_number" ></el-input>
+              </el-form-item>
+              <el-form-item label="备用电话" label-width="68px">
+                <el-input v-model="person.standby_phone_number" ></el-input>
+              </el-form-item>
+              <el-form-item label="床号" label-width="68px">
+                <el-input v-model="person.bed_number" ></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+
+          <div class="col-md-6">
+          <el-form :model="person">
+            <el-form-item label="" label-width="68px" v-if="personMeta.has_contract">
+              &nbsp;
+            </el-form-item>
+            <el-form-item label="劳动合同" label-width="68px" v-if="personMeta.has_contract">
+              <el-input v-model="person.contract_start_date" ></el-input>
+            </el-form-item>
+            <el-form-item label="劳动合同" label-width="68px" v-if="personMeta.has_contract">
+              <el-input v-model="person.contract_end_date" ></el-input>
+            </el-form-item>
+            <el-form-item label="租房合同起始日" label-width="68px" v-if="personMeta.has_contract">
+              <el-input v-model="person.rent_start_date" ></el-input>
+            </el-form-item>
+            <el-form-item label="租房合同结束日" label-width="68px" v-if="personMeta.has_contract">
+              <el-input v-model="person.rent_end_date" ></el-input>
+            </el-form-item>
+            <el-form-item label="配偶姓名" label-width="68px" v-if="!personMeta.is_single">
+              <el-input v-model="person.spouse" ></el-input>
+            </el-form-item>
+            <el-form-item label="配偶电话" label-width="68px" v-if="!personMeta.is_single">
+              <el-input v-model="person.spouse_phone_number" ></el-input>
+            </el-form-item>
+            <el-form-item label="配偶身份证号" label-width="68px" v-if="!personMeta.is_single">
+              <el-input v-model="person.spouse_identify" ></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="checkinFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="store">{{storeButtonMsg}}</el-button>
+        </div>
+      </el-dialog>
   </div>
 </template>
 
@@ -166,72 +241,150 @@ export default {
       const d2 = new Date(date2)
       return d1 > d2 || d1 == d2
     }
-    // const isDate = (rule, value, callback) => {
-    //   if (value != '') {
-    //     this.log(value.toString())
-    //     if (new Date(value).getDate() != value.substring(value.length-2)) {
-    //       callback(new Error('请输入一个日期'))
-    //     }
-    //   }
-    //   callback()
-    // }
     const validateEndDate = (rule, value, callback) => {
-      if (this.rentDateSearchOption.startDate != '') {
-        if (bigger(this.rentDateSearchOption.startDate, value)) {
+      if (this.rentDateSearchOption.start_date != '') {
+        if (bigger(this.rentDateSearchOption.start_date, value)) {
           callback(new Error('结束日期小于开始日期'))
         }
       }
       callback()
     }
     const validateStartDate = (rule, value, callback) => {
-      if (this.rentDateSearchOption.endDate != '') {
-        if (bigger(value, this.rentDateSearchOption.endDate)) {
+      if (this.rentDateSearchOption.end_date != '') {
+        if (bigger(value, this.rentDateSearchOption.end_date)) {
           callback(new Error('开始日期大于结束日期'))
         }
       }
       callback()
     }
     return {
+      checkinFormVisible: false,
+      checkinRoomIndex: '',
+      getRoomLoading: false,
+      person: {
+        room_id:null,
+        name: null,
+        gender: null,
+        education: null,
+        department: null,
+        checkin_at: null,
+        phone_number: null,
+        rent_start_date: null,
+        rent_end_date: null,
+        identify: null,
+        standby_phone_number:null,
+        contract_start_date:null,
+        contract_end_date:null,
+        spouse:null,
+        spouse_identify:null,
+        spouse_phone_number:null,
+        bed_number:null,
+        remark:null
+      },
+      personMeta: {
+        room:'',
+        room_type:'',
+        has_contract: true,
+        is_single:false
+      },
+      storeButtonMsg: '提 交',
       loading: false,
       noDataMsg: '',
       roomStructureLoading: false,
       rooms: [],
+      currentRoomIndex:0,
       peopleCount: 0,
       roomCount: 0,
       searchInput:'',
       rentDateSearchOn: false,
       rentDateSearchOption: {
-        dateType: 'start',
-        startDate:'',
-        endDate:''
+        date_type: 'start',
+        start_date:'',
+        end_date:''
       },
       selectedOption: [],
       roomStructure: [],
       rules:{
-        startDate: [
+        start_date: [
           { validator: validateStartDate, trigger: 'change' }
         ],
-        endDate: [
+        end_date: [
           { validator: validateEndDate, trigger: 'change' }
         ]
       }
     }
   },
   methods: {
-    fetchData(params) {
-      this.loading = true,
+    addPerson(roomIndex) {
+      this.checkinFormVisible = true
+      this.currentRoomIndex = roomIndex
+      let roomId = this.rooms[roomIndex].id
+      this.getRoom(roomId)
+      // this.rooms[roomIndex].people.push(this.person)
+
+    },
+    getRoom(roomId) {
+      this.resetPerson()
+      this.getRoomLoading = true
+      this.http.get({
+        url:'rooms/' + roomId,
+        success: (result) => {
+          this.person.room_id = result.data.id
+          this.personMeta.room = result.data.display_name
+          this.personMeta.room_type = result.data.type.name
+          this.personMeta.has_contract = result.data.type.has_contract
+          this.personMeta.is_single = result.data.type.is_single
+        },
+        done: ()=>{
+          this.getRoomLoading = false
+        }
+      })
+    },
+    store() {
+      this.storeButtonMsg = '提交中...'
+      this.http.post({
+        url: 'people',
+        data: this.person,
+        success:(result) => {
+          let person = this.person
+          person.id = result.data.id
+          this.rooms[this.currentRoomIndex].people.push(person)
+          this.checkinFormVisible = false
+          this.peopleCount++
+        },
+        successMsg: '保存成功',
+        done:()=>{
+          this.storeButtonMsg = '提 交'
+        }
+      })
+    },
+    resetPerson() {
+      // reset
+      for (var p in this.person) {
+        if (this.person.hasOwnProperty(p)) {
+          this.person[p] = null
+        }
+      }
+      this.personMeta.room = ''
+      this.personMeta.room_type = ''
+      this.personMeta.has_contract = false
+      this.personMeta.is_single = false
+    },
+    fetchData(type, params) {
+      this.loading = true
+      params.search = type
       this.http.get({
         url: 'people',
         params: params,
-        success: (res) => {
-          if (res.data.people.length == 0) {
+        success: (result) => {
+          if (result.data.length == 0) {
             this.noDataMsg = '没有找到相关人员'
           } else {
             this.noDataMsg = ''
           }
-          this.rooms = res.data.people
-          this.peopleCount = res.data.peopleCount
-          this.roomCount = res.data.roomCount
+          this.rooms = result.data
+          this.peopleCount = result.meta.peopleCount
+          this.roomCount = result.meta.roomCount
         },
         done: ()=>{
           this.loading = false
@@ -242,18 +395,22 @@ export default {
       if (this.searchInput) {
         this.rentDateSearchOn = false
         this.selectedOption = []
-        this.fetchData({search: this.searchInput})
+        this.fetchData('keyword', {
+          keyword: this.searchInput
+        })
       }
     },
     searchByDate() {
       if (this.rentDateSearchOption.startDate != ''
             && this.rentDateSearchOption.endDate != '') {
-        this.fetchData(this.rentDateSearchOption)
+        this.fetchData('date', this.rentDateSearchOption)
       }
     },
     searchRoom(event) {
       this.searchInput = event.target.innerText
-      this.search({search: this.searchInput})
+      this.fetchData('keyword', {
+        keyword: this.searchInput
+      })
     },
     selectChange(value) {
       if (value.length == 3) {
@@ -264,7 +421,7 @@ export default {
           building: value[1],
           unit: value[2]
         }
-        this.fetchData(option)
+        this.fetchData('select', option)
       }
     },
     getRoomStructure() {
@@ -272,11 +429,11 @@ export default {
         this.roomStructureLoading = true
         this.http.get({
           url: 'room-structure',
-          success: (res) => {
-            this.roomStructure = res.data
+          success: (result) => {
+            this.roomStructure = result.data
             this.roomStructureLoading = false
             $('.el-cascader').trigger('click')
-            sessionStorage.setItem('room-structure', JSON.stringify(res.data))
+            sessionStorage.setItem('room-structure', JSON.stringify(result.data))
           }
         })
       } else {
@@ -324,7 +481,7 @@ export default {
     min-height: 200px;
   }
   .row .no-data{
-    line-height: 100px;
+    line-height: 68px;
     font-size: 22px;
     color: #999;
     font-weight: normal;

@@ -83,9 +83,9 @@ export default {
         fetchData() {
           this.http.get({
             url: 'rooms',
-            success: (res) => {
+            success: (result) => {
               this.loading = false
-              this.tableData = res.data
+              this.tableData = result.data
             }
           })
 

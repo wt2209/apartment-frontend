@@ -24,7 +24,7 @@ const result = {
                 data: obj.data
               })
               .then(function(response) {
-                obj.success && obj.success(response)
+                obj.success && obj.success(response.data)
                 if (obj.successMsg != undefined) {
                   Vue.prototype.$message({
                     message: obj.successMsg,
@@ -38,11 +38,15 @@ const result = {
                 if (error) {
                   obj.error && obj.error(error.response)
                   let errorCode = 0
+                  let message = ''
                   if (error.response && error.response.status) {
                     errorCode = error.response.status
+                    if (error.response.data.error) {
+                      message = error.response.data.error
+                    }
                   }
                   Vue.prototype.$notify.error({
-                    title: '错误: ' + (obj.errorMsg || error.message),
+                    title: '错误: ' + (obj.errorMsg || message || error.message),
                     message: '错误代码：' + errorCode,
                     duration: 0
                   })
@@ -67,7 +71,7 @@ axios.interceptors.request.use((config) => {
 
 // 拦截响应response，并做一些错误处理
 axios.interceptors.response.use((response) => {
-  if (response.status == 200){
+  if (response.status >= 200 && response.status < 300){
     return response
   }
   //其他错误
@@ -75,7 +79,7 @@ axios.interceptors.response.use((response) => {
   err.response = response
   err.response.status = 0
   throw err
-  
+
 }, (err) => { // 这里是返回状态码不为200时候的错误处理
   if (err && err.response) {
     switch (err.response.status) {
