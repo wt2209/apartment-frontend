@@ -28,7 +28,7 @@
             </el-input>
           </div>
           <div class="pull-left">
-            <el-form :inline="true" :rules="rules" :model="rentDateSearchOption">
+            <el-form :inline="true" :model="rentDateSearchOption">
               <el-form-item>
                 <el-checkbox v-model="rentDateSearchOn">租期搜索&nbsp;&nbsp;&nbsp;</el-checkbox>
               </el-form-item>
@@ -70,16 +70,26 @@
               :key="room.id">
               <el-card class="room-card"
                 :body-style="{ padding: '5px' }">
-                <div slot="header">
-                  <span style="font-size:24px;cursor:pointer" @click="searchRoom">
-                    {{room.display_name}}
-                  </span>
-                  <span style="margin-left:8px;">
-                    {{room.remark}}
-                  </span>
-                  <span class="pull-right">
-                    <el-button type="text">房间记录</el-button>
-                  </span>
+                <div class="card-header">
+                  <el-row :gutter="5">
+                    <el-col :span="6">
+                      <h2 @click="searchRoom" style="font-size:24px;cursor:pointer">{{room.display_name}}</h2>
+                      <el-button type="text">调整用途</el-button>
+                    </el-col>
+                    <el-col :span="18">
+                      <el-row :gutter="5">
+                        <el-col :span="18" style="margin-top:5px;">
+                          {{room.remark}}&nbsp;备注
+                        </el-col>
+                        <el-col :span="6">
+                          <div class="pull-right">
+                            <el-button type="text">房间历史</el-button><br>
+                            <el-button type="text">添加记录</el-button>
+                          </div>
+                        </el-col>
+                      </el-row>
+                    </el-col>
+                  </el-row>
                 </div>
                 <el-row>
                     <el-col :xs="24" :sm="room.person_number > 1 ? 12 : 24" v-for="i in room.person_number" :key="i">
@@ -235,28 +245,6 @@
 export default {
   name: 'people',
   data () {
-    //date1 > date2
-    const bigger = (date1, date2) => {
-      const d1 = new Date(date1)
-      const d2 = new Date(date2)
-      return d1 > d2 || d1 == d2
-    }
-    const validateEndDate = (rule, value, callback) => {
-      if (this.rentDateSearchOption.start_date != '') {
-        if (bigger(this.rentDateSearchOption.start_date, value)) {
-          callback(new Error('结束日期小于开始日期'))
-        }
-      }
-      callback()
-    }
-    const validateStartDate = (rule, value, callback) => {
-      if (this.rentDateSearchOption.end_date != '') {
-        if (bigger(value, this.rentDateSearchOption.end_date)) {
-          callback(new Error('开始日期大于结束日期'))
-        }
-      }
-      callback()
-    }
     return {
       checkinFormVisible: false,
       checkinRoomIndex: '',
@@ -303,15 +291,7 @@ export default {
         end_date:''
       },
       selectedOption: [],
-      roomStructure: [],
-      rules:{
-        start_date: [
-          { validator: validateStartDate, trigger: 'change' }
-        ],
-        end_date: [
-          { validator: validateEndDate, trigger: 'change' }
-        ]
-      }
+      roomStructure: []
     }
   },
   methods: {
@@ -320,8 +300,6 @@ export default {
       this.currentRoomIndex = roomIndex
       let roomId = this.rooms[roomIndex].id
       this.getRoom(roomId)
-      // this.rooms[roomIndex].people.push(this.person)
-
     },
     getRoom(roomId) {
       this.resetPerson()
@@ -456,12 +434,23 @@ export default {
     font-weight: normal;
     margin:0;
   }
-  .search-nav{
-    padding: 10px 15px 16px;
-  }
   .rent-date-search{
     height: 100%;
     vertical-align: middle;
+  }
+  .el-card .card-header{
+    padding: 0 5px 0;
+    border-bottom: 1px solid rgb(209, 219, 229);
+    overflow: hidden;
+  }
+  .el-card .card-header h2{
+    margin-top: 3px;
+  }
+  .card-header .header-left{
+    width:120px;
+  }
+  .card-header .header-right{
+
   }
   .el-form-item{
     margin: 0 ;

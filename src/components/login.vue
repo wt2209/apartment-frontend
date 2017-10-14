@@ -49,8 +49,8 @@ export default {
       this.http.post({
         url: 'login',
         data: this.form,
-        success: (response) => {
-            sessionStorage.setItem('access_token', response.data.token)
+        success: (result) => {
+            sessionStorage.setItem('access_token', result.token)
             sessionStorage.setItem('username', this.form.name)
             this.$router.push(this.$route.query.redirect || '/')
         },
