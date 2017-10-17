@@ -61,7 +61,14 @@
           </div>
         </div>
       </section>
-
+      <el-popover
+        ref="popovermore"
+        placement="bottom"
+        title="标题"
+        width="200"
+        trigger="click"
+        content="11111111">
+      </el-popover>
       <section class="content">
         <div class="container-fluid main-content">
           <div class="row" v-loading="loading">
@@ -103,11 +110,11 @@
                         <div class="person-detail">
                           <el-row :gutter="5" >
                             <el-col :span="12">
-                              <p>{{room.people[i - 1].department}}</p>
-                              <p>{{room.people[i - 1].phone_number}}</p>
+                              <p>{{room.people[i - 1].department}}&nbsp;</p>
+                              <p>{{room.people[i - 1].phone_number}}&nbsp;</p>
                             </el-col>
                             <el-col :span="12">
-                              <p>入住时间</p>
+                              <p v-if="room.people[i - 1].checkin_at">入住时间</p>
                               <p>{{room.people[i - 1].checkin_at}}</p>
                             </el-col>
                           </el-row>
@@ -126,8 +133,25 @@
                         </div>
                         <div class="person-detail">
                           <el-row >
-                            <el-col :span="24">
+                            <el-col :span="18">
                               <p>备注：</p>{{room.people[i - 1].remark}}
+                            </el-col>
+                            <el-col :span="6">
+                              <div class="pull-right">
+                                <el-popover
+                                  placement="top"
+                                  width="250">
+                                  <div>
+                                    <p v-if="room.people[i - 1].identify">身份证号：{{room.people[i - 1].identify}}</p>
+                                    <p v-if="room.people[i - 1].bed_number">床号：{{room.people[i - 1].bed_number}}</p>
+                                    <p v-if="room.people[i - 1].standby_phone_number">备用电话：{{room.people[i - 1].standby_phone_number}}</p>
+                                    <p v-if="room.people[i - 1].spouse">配偶姓名：{{room.people[i - 1].spouse}}</p>
+                                    <p v-if="room.people[i - 1].spouse_phone_number">配偶电话：{{room.people[i - 1].spouse_phone_number}}</p>
+                                    <p v-if="room.people[i - 1].spouse_identify">配偶身份证号：{{room.people[i - 1].spouse_identify}}</p>
+                                  </div>
+                                  <a href="javascript:;" slot="reference" class="more" @click="moreInfo(roomIndex, room.people[i - 1].id)">详细>></a>
+                                </el-popover>
+                              </div>
                             </el-col>
                           </el-row>
                         </div>
@@ -139,9 +163,7 @@
                         </div>
                       </el-card>
                       <el-card v-else class="person-card" :body-style="{ padding: '5px' }">
-                        <div class="person-add" @click="addPerson(roomIndex)">
-                          <i class="el-icon-plus avatar-uploader-icon"></i>
-                        </div>
+                        <add-person :roomIndex="roomIndex" :room="room" v-on:success="personAdded"></add-person>
                       </el-card>
                     </el-col>
                 </el-row>
@@ -159,123 +181,20 @@
           </p>
         </div>
       </div>
-
-      <el-dialog title="人员入住" :visible.sync="checkinFormVisible">
-        <div class="row" v-loading="getRoomLoading">
-          <div class="col-md-6">
-            <el-form :model="person"  label-position="left">
-              <el-form-item label="房间号" label-width="68px">
-                {{ personMeta.room }} — {{ personMeta.room_type }}
-              </el-form-item>
-              <el-form-item label="姓名" label-width="68px">
-                <el-input v-model="person.name"></el-input>
-              </el-form-item>
-              <el-form-item label="性别" label-width="68px">
-                <el-radio class="radio" v-model="person.gender" label="男">男</el-radio>
-                <el-radio class="radio" v-model="person.gender" label="女">女</el-radio>
-              </el-form-item>
-              <el-form-item label="学历" label-width="68px">
-                <el-radio-group v-model="person.education" size="small">
-                 <el-radio-button label="专科"></el-radio-button>
-                 <el-radio-button label="本科"></el-radio-button>
-                 <el-radio-button label="硕士"></el-radio-button>
-                 <el-radio-button label="博士"></el-radio-button>
-                 <el-radio-button label="其他"></el-radio-button>
-               </el-radio-group>
-              </el-form-item>
-              <el-form-item label="部门" label-width="68px">
-                <el-input v-model="person.department" ></el-input>
-              </el-form-item>
-              <el-form-item label="身份证号" label-width="68px">
-                <el-input v-model="person.identify" ></el-input>
-              </el-form-item>
-              <el-form-item label="入住时间" label-width="68px">
-                <el-input v-model="person.checkin_at" ></el-input>
-              </el-form-item>
-              <el-form-item label="电话" label-width="68px">
-                <el-input v-model="person.phone_number" ></el-input>
-              </el-form-item>
-              <el-form-item label="备用电话" label-width="68px">
-                <el-input v-model="person.standby_phone_number" ></el-input>
-              </el-form-item>
-              <el-form-item label="床号" label-width="68px">
-                <el-input v-model="person.bed_number" ></el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-
-          <div class="col-md-6">
-          <el-form :model="person">
-            <el-form-item label="" label-width="68px" v-if="personMeta.has_contract">
-              &nbsp;
-            </el-form-item>
-            <el-form-item label="劳动合同" label-width="68px" v-if="personMeta.has_contract">
-              <el-input v-model="person.contract_start_date" ></el-input>
-            </el-form-item>
-            <el-form-item label="劳动合同" label-width="68px" v-if="personMeta.has_contract">
-              <el-input v-model="person.contract_end_date" ></el-input>
-            </el-form-item>
-            <el-form-item label="租房合同起始日" label-width="68px" v-if="personMeta.has_contract">
-              <el-input v-model="person.rent_start_date" ></el-input>
-            </el-form-item>
-            <el-form-item label="租房合同结束日" label-width="68px" v-if="personMeta.has_contract">
-              <el-input v-model="person.rent_end_date" ></el-input>
-            </el-form-item>
-            <el-form-item label="配偶姓名" label-width="68px" v-if="!personMeta.is_single">
-              <el-input v-model="person.spouse" ></el-input>
-            </el-form-item>
-            <el-form-item label="配偶电话" label-width="68px" v-if="!personMeta.is_single">
-              <el-input v-model="person.spouse_phone_number" ></el-input>
-            </el-form-item>
-            <el-form-item label="配偶身份证号" label-width="68px" v-if="!personMeta.is_single">
-              <el-input v-model="person.spouse_identify" ></el-input>
-            </el-form-item>
-          </el-form>
-        </div>
-        </div>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="checkinFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="store">{{storeButtonMsg}}</el-button>
-        </div>
-      </el-dialog>
   </div>
 </template>
 
 <script>
+import AddPerson from '@/components/person/dialog/add-person'
+
 export default {
   name: 'people',
+  components: {
+    AddPerson
+  },
   data () {
     return {
-      checkinFormVisible: false,
-      checkinRoomIndex: '',
-      getRoomLoading: false,
-      person: {
-        room_id:null,
-        name: null,
-        gender: null,
-        education: null,
-        department: null,
-        checkin_at: null,
-        phone_number: null,
-        rent_start_date: null,
-        rent_end_date: null,
-        identify: null,
-        standby_phone_number:null,
-        contract_start_date:null,
-        contract_end_date:null,
-        spouse:null,
-        spouse_identify:null,
-        spouse_phone_number:null,
-        bed_number:null,
-        remark:null
-      },
-      personMeta: {
-        room:'',
-        room_type:'',
-        has_contract: true,
-        is_single:false
-      },
-      storeButtonMsg: '提 交',
+      currentPerson: {},
       loading: false,
       noDataMsg: '',
       roomStructureLoading: false,
@@ -295,58 +214,18 @@ export default {
     }
   },
   methods: {
-    addPerson(roomIndex) {
-      this.checkinFormVisible = true
-      this.currentRoomIndex = roomIndex
-      let roomId = this.rooms[roomIndex].id
-      this.getRoom(roomId)
-    },
-    getRoom(roomId) {
-      this.resetPerson()
-      this.getRoomLoading = true
-      this.http.get({
-        url:'rooms/' + roomId,
-        success: (result) => {
-          this.person.room_id = result.data.id
-          this.personMeta.room = result.data.display_name
-          this.personMeta.room_type = result.data.type.name
-          this.personMeta.has_contract = result.data.type.has_contract
-          this.personMeta.is_single = result.data.type.is_single
-        },
-        done: ()=>{
-          this.getRoomLoading = false
-        }
-      })
-    },
-    store() {
-      this.storeButtonMsg = '提交中...'
-      this.http.post({
-        url: 'people',
-        data: this.person,
-        success:(result) => {
-          let person = this.person
-          person.id = result.data.id
-          this.rooms[this.currentRoomIndex].people.push(person)
-          this.checkinFormVisible = false
-          this.peopleCount++
-        },
-        successMsg: '保存成功',
-        done:()=>{
-          this.storeButtonMsg = '提 交'
-        }
-      })
-    },
-    resetPerson() {
-      // reset
-      for (var p in this.person) {
-        if (this.person.hasOwnProperty(p)) {
-          this.person[p] = null
+    moreInfo(roomIndex, personId) {
+      const room = this.rooms[roomIndex]
+      for (const p of room.people) {
+        if (p.id == personId) {
+          this.currentPerson = p
+          break
         }
       }
-      this.personMeta.room = ''
-      this.personMeta.room_type = ''
-      this.personMeta.has_contract = false
-      this.personMeta.is_single = false
+    },
+    personAdded(ret) {
+      this.rooms[ret.index].people.push(ret.person)
+      this.peopleCount++
     },
     fetchData(type, params) {
       this.loading = true
@@ -449,12 +328,7 @@ export default {
   .card-header .header-left{
     width:120px;
   }
-  .card-header .header-right{
 
-  }
-  .el-form-item{
-    margin: 0 ;
-  }
   .main-content{
     max-width: 1200px;
   }
@@ -505,17 +379,17 @@ export default {
   .clearfix{
     clear: both;
   }
-  .person-add{
-    display: block;
-    cursor: pointer;
-    line-height: 131px;
-    text-align: center;
-    font-size: 42px;
+  .el-form-item{
+    margin: 0 ;
   }
-  .person-add i{
-    color:gray;
+  .more{
+    display: inline-block;
+    margin-top: 3px;
+    color: #d73925;
+    font-size: 12px;
   }
-  .person-add {
-    color: #000000;
+  .more:hover{
+    color: #c9302c;
   }
+
 </style>
