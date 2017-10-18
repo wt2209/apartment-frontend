@@ -1,58 +1,64 @@
 <template>
-  <div class="add-bill">
-      <section class="content-header">
-        <h1>
-          添加费用
-          <!-- 刷新按钮 -->
-          <!-- <small>&nbsp;&nbsp;&nbsp;<a class="pull-right glyphicon glyphicon-refresh" href="#rooms"></a></small> -->
-        </h1>
-        <ol class="breadcrumb">
-          <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
-          <li class="active">添加费用 </li>
-        </ol>
-      </section>
 
-      <section class="content">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <div class="col-md-12">
-                  <p class="title">基本信息：</p>
-                  <el-form ref="form" :inline="true" label-width="70px">
-                    <el-form-item label="名称">
-                      <el-input v-model="form.title" placeholder="如：租赁费用"></el-input>
-                    </el-form-item>
-                    <el-form-item label="房间号" placeholder="金额">
-                      <el-input v-model="form.room"></el-input>
-                    </el-form-item>
-                    <el-form-item label="姓名">
-                      <el-input v-model="form.name"></el-input>
-                    </el-form-item>
-                  </el-form>
-                </div>
-
-                <rent-bill></rent-bill>
-
-              </div>
-              <div class="panel-footer">
-                <button type="button" class="btn btn-success" id="submitButton"  @click="submit()">{{ buttonMsg }}</button>
-              </div>
-            </div>
-          </div>
+  <div class="rent-bill">
+    <div class="col-md-12">
+      <p class="title">费用明细：</p>
+      <div v-for="detail in form.items"  class="fee-items">
+        <div class="col-md-2">
+          <el-input v-model="detail.item" placeholder="类型，如：电费"></el-input>
         </div>
-    </section>
+        <div class="col-md-2">
+          <el-input v-model="detail.money" placeholder="金额"></el-input>
+        </div>
+        <div  class="col-md-6">
+          <el-input v-model="detail.description" placeholder="费用说明"></el-input>
+        </div>
+        <div class="col-md-2" style="line-height:36px">
+          <el-checkbox v-model="detail.turn_in">上缴北船</el-checkbox>
+        </div>
+        <!-- <div class="col-md-1" >
+          <el-button type="text" @click="addNewItem()">删除行</el-button>
+        </div> -->
+      </div>
+      <div class="add-new-item">
+        <el-button type="text" @click="addNewItem()">添加新行</el-button>
+      </div>
+    </div>
+    <div class="config col-md-12">
+      <p>总费用：<span>{{ fees }}</span></p>
+      <p>上缴总费用：<span>{{ turn_in_fees }}</span></p>
+      <p>
+        是否收取滞纳金：
+        <el-switch v-model="form.late_fees_on" on-color="#13ce66" on-value="1" off-value="0" on-text="收取" off-text="不收"></el-switch>
+      </p>
+      <div v-if="form.late_fees_on == 1">
+        <p>
+          滞纳金基数：
+          <span style="width:200px;display:inline-block;">
+            <el-input placeholder="金额" v-model="form.late_fees_base"></el-input>
+          </span>
+        </p>
+        <p>
+          滞纳金费率：
+          <span style="width:200px;display:inline-block;">
+            <el-input placeholder="费用说明" v-model="late_rate">
+              <template slot="append">%</template>
+            </el-input>
+          </span>
+          （只精确到0.1%）
+        </p>
+        <p>滞纳金开始计算日：<span><el-date-picker type="date" placeholder="选择日期" style="width:200px;"></el-date-picker></span></p>
+      </div>
+    </div>
   </div>
+
+
+
 </template>
 
 <script>
-import RentBill from '@/components/bill/rent-bill'
-
 export default {
-  name: 'add-bill',
-  components: {
-    RentBill
-  },
+  name: 'rent-bill',
   data () {
     return {
       buttonMsg: '提 交',
