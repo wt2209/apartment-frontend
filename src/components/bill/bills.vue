@@ -84,7 +84,7 @@
               fixed="right"
               label="操作"
               width="100">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
                 <el-button type="text" size="small">编辑</el-button>
               </template>
@@ -145,6 +145,6 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scope>
 
 </style>

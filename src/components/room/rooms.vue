@@ -15,9 +15,8 @@
           <div class="col-md-3">
             <el-input
               placeholder="搜索"
-              icon="search"
-              v-model="input"
-              :on-icon-click="handleIconClick">
+              v-model="input">
+              <el-button slot="append" icon="el-icon-search"  @click="searchByInput"></el-button>
             </el-input>
           </div>
         </div>

@@ -22,10 +22,10 @@
           <div class="pull-left" style="margin-right: 68px;" @keyup.enter="searchByInput">
             <el-input
               placeholder="搜索"
-              icon="search"
-              v-model="searchInput"
-              :on-icon-click="searchByInput">
+              v-model="searchInput">
+               <el-button slot="append" icon="el-icon-search"  @click="searchByInput"></el-button>
             </el-input>
+
           </div>
           <div class="pull-left">
             <el-form :inline="true" :model="rentDateSearchOption">
@@ -42,20 +42,20 @@
                 <el-date-picker
                   v-model="rentDateSearchOption.start_date"
                   type="date"
-                  style="width:125px;"
+                  style="width:140px;"
                   placeholder="开始日期">
                 </el-date-picker>
               </el-form-item>
               <el-form-item v-if="rentDateSearchOn" prop="end_date">
                 <el-date-picker
-                 style="width:125px;"
+                 style="width:140px;"
                   v-model="rentDateSearchOption.end_date"
                   type="date"
                   placeholder="结束日期">
                 </el-date-picker>
               </el-form-item>
               <el-form-item v-if="rentDateSearchOn">
-                <el-button icon="search" type="primary" @click="searchByDate">查询</el-button>
+                <el-button icon="el-icon-search" type="default" @click="searchByDate">查询</el-button>
               </el-form-item>
             </el-form>
           </div>

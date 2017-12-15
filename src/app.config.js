@@ -9,7 +9,7 @@ const appConfig = {
   /**
    * the APP's server side api url
    */
-  appBaseURL: 'http://apartment-api.app/api/'
+  appBaseURL: 'http://apartment-api.dev/api/'
 }
 
 

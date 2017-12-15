@@ -14,7 +14,7 @@
           <div class="col-md-3">
             <el-input
               placeholder="搜索"
-              icon="search"
+              suffix-icon="el-icon-search"
               v-model="search"
               :on-icon-click="handleIconClick">
             </el-input>
