@@ -20,7 +20,7 @@
                 <div class="col-md-12">
                   <p class="title">基本信息：</p>
                   <el-form ref="form" :inline="true" label-width="70px">
-                    <el-form-item label="房间号" placeholder="金额">
+                    <el-form-item label="房间号" >
                       <el-input v-model="form.room"></el-input>
                     </el-form-item>
                     <el-form-item label="姓名">
@@ -30,58 +30,48 @@
                 </div>
                 <div class="col-md-12">
                   <p class="title">费用明细：</p>
-
-                  <el-form :inline="true" :model="form" ref="form" label-width="100px" class="demo-dynamic">
+                  <el-form :model="form" ref="form" label-width="70px" class="demo-dynamic">
                     <el-form-item
                       v-for="(item, index) in form.items"
-                      :key="item.type"
-                    >
-
-
-                    <div class="col-md-3">
-                      <el-select v-model="item.type" placeholder="选择费用类型">
-                        <el-option label="房租" value="shanghai"></el-option>
-                        <el-option label="电费" value="beijing"></el-option>
-                      </el-select>
-                    </div>
-                    <div class="col-md-3">
-                      <el-input v-model="item.money" placeholder="金额"></el-input>
-                    </div>
-                    <div  class="col-md-6">
-                      <el-input v-model="item.description" placeholder="费用说明"></el-input>
-                    </div>
-
-
-                    <el-button @click.prevent="removeItem(item)">删除</el-button>
+                      :key="item.type">
+                      <el-row :gutter="10">
+                        <el-col :md="3" :xs="24">
+                          <el-select v-model="item.type" v-loading="billTypesLoading" placeholder="选择费用类型">
+                            <el-option v-for="(type, index) in billTypes" :key="type.id" :label="type.title" :value="type.id"></el-option>
+                          </el-select>
+                        </el-col>
+                        <el-col :md="3" :xs="24">
+                          <el-input v-model="item.fees" placeholder="金额"></el-input>
+                        </el-col>
+                        <el-col :md="6" :xs="24">
+                          <el-input v-model="item.remark" placeholder="费用说明"></el-input>
+                        </el-col>
+                        <el-col :md="3" :xs="24" v-if="item.type  && billTypes[item.type]['late_fees_on']">
+                          <el-input v-model="item.late_fees_base" placeholder="滞纳金基数"></el-input>
+                        </el-col>
+                        <!-- <el-col :md="3" :xs="24" v-if="item.type  && billTypes[item.type]['late_fees_on']">
+                          <el-input v-model="item.late_rate" placeholder="滞纳金费率">
+                            <template slot="append">%</template>
+                          </el-input>
+                        </el-col> -->
+                        <el-col :md="3" :xs="24" v-if="item.type  && billTypes[item.type]['late_fees_on']">
+                          <el-date-picker style="width:170px;" v-model="item.late_at" type="date" placeholder="滞纳金开始日"></el-date-picker>
+                        </el-col>
+                        <el-col :md="2" :xs="24">
+                          <el-button v-if="index!=0" @click.prevent="removeItem(item)">删除</el-button>
+                        </el-col>
+                      </el-row>
                     </el-form-item>
                     <el-form-item>
-                      <el-button @click="addNewItem">新增费用</el-button>
+                      <el-button type="text" @click="addNewItem">新增费用</el-button>
                     </el-form-item>
                   </el-form>
-
-
-                  <div v-for="detail in form.items"  class="fee-items">
-                    <div class="col-md-2">
-                      <el-input v-model="detail.item" placeholder="类型，如：电费"></el-input>
-                    </div>
-                    <div class="col-md-2">
-                      <el-input v-model="detail.money" placeholder="金额"></el-input>
-                    </div>
-                    <div  class="col-md-6">
-                      <el-input v-model="detail.description" placeholder="费用说明"></el-input>
-                    </div>
-                    <div class="col-md-2" style="line-height:36px">
-                      <el-checkbox v-model="detail.turn_in">上缴北船</el-checkbox>
-                    </div>
-                    <!-- <div class="col-md-1" >
-                      <el-button type="text" @click="addNewItem()">删除行</el-button>
-                    </div> -->
-                  </div>
-                  <div class="add-new-item">
-                    <el-button type="text" @click="addNewItem()">添加新行</el-button>
-                  </div>
+                  <p>
+                    费用生成后立即缴费：
+                    <el-switch v-model="form.charge" active-color="#00a65a"></el-switch>
+                  </p>
                 </div>
-                <div class="config col-md-12">
+                <!-- <div class="config col-md-12">
                   <p>总费用：<span>{{ fees }}</span></p>
                   <p>上缴总费用：<span>{{ turn_in_fees }}</span></p>
                   <p>
@@ -106,7 +96,7 @@
                     </p>
                     <p>滞纳金开始计算日：<span><el-date-picker type="date" placeholder="选择日期" style="width:200px;"></el-date-picker></span></p>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div class="panel-footer">
                 <button type="button" class="btn btn-success" id="submitButton"  @click="submit()">{{ buttonMsg }}</button>
@@ -123,51 +113,51 @@ export default {
   name: 'add-bill',
   data () {
     return {
-      buttonMsg: '提 交',
+      billTypesLoading:false,
+      billTypes:[],
+      buttonMsg: "提 交",
       //fees 和 turn_in_fees 必须在后台重新算，因此不计入form
-      fees: 0,
-      turn_in_fees: 0,
+      // fees: 0,
+      // turn_in_fees: 0,
       // form.late_rate 必须除以100
-      late_rate:0.3,
+      // late_rate:0.3,
       form: {
-        title: '',
-        room: '',
-        name: '',
-        late_fees_on: 0,
-        late_fees_base: '',
+        room:null,
+        name:null,
+        charge:false,
         items: [{
           type: '',
-          money: '',
-          description: ''
+          fees: '',
+          remark: '',
+          late_fees_base:'',
+          late_at:''
         }]
       }
     }
   },
-  watch:{
-    'form.items': {
-      handler: function(val, oldVal){
-        // reset this.fees and this.turn_in_fees
-        this.fees = 0
-        this.turn_in_fees = 0
-        for (let i of val) {
-          // set this.fees and this.turn_in_fees
-          if (i.item && Number.parseFloat(i.money)) {
-            this.fees += Number.parseFloat(i.money)
-            if (i.turn_in) {
-              this.turn_in_fees += Number.parseFloat(i.money)
-            }
-          }
-        }
-      },
-      deep: true
-    }
-  },
   methods: {
+    getBillTypes(){
+      if (!sessionStorage.getItem('bill-types')) {
+        this.billTypesLoading = true
+        this.http.get({
+          url: 'bill-types',
+          success: (result) => {
+            this.billTypes = result.data
+            this.billTypesLoading = false
+            sessionStorage.setItem('bill-types', JSON.stringify(result.data))
+          }
+        })
+      } else {
+        this.billTypes = JSON.parse(sessionStorage.getItem('bill-types'))
+      }
+    },
     addNewItem(){
       this.form.items.push({
-        type: '',
-        money: '',
-        description: ''
+        type: null,
+        fees: null,
+        remark: null,
+        late_fees_base:null,
+        late_at:null
       })
     },
     removeItem(item) {
@@ -177,7 +167,6 @@ export default {
        }
      },
     submit() {
-      this.form.late_rate = this.late_rate / 1000
       this.buttonMsg = '提交中...'
       $('#submitButton').attr('disabled', 'disabled')
       this.http.post({
@@ -186,36 +175,31 @@ export default {
         successMsg: '添加成功',
         success: (res) => {
           this.log(res)
+          this.resetForm()
         },
         done: () => {
           this.buttonMsg = '提 交'
           $('#submitButton').removeAttr('disabled')
-          this.resetForm()
         }
       })
     },
     resetForm() {
       this.form = {
-        late_fees_on: 0,
-        title: '',
-        room: '',
-        name: '',
-        late_fees_base: '',
+        charge:false,
         items: [{
-          item: '',
-          money: '',
-          description: '',
-          turn_in: true
+          type: null,
+          fees: null,
+          remark: null,
+          late_fees_base:null,
+          late_at:null
         }]
-      },
-      this.fees = 0,
-      this.turn_in_fees = 0,
-      this.late_rate = 0.3
+      }
     }
   },
   mounted() {
     // 计算内容区域高度
-    window.resizeContent()
+    window.resizeContent();
+    this.getBillTypes();
   }
 }
 </script>
@@ -234,12 +218,10 @@ export default {
     margin: 0 0 30px 15px ;
   }
   .title,
-  .config p{
+   p{
     color:#48576a;
     margin: 15px 0 ;
     font-weight: bold;
   }
-  .config p span{
-    font-weight: normal;
-  }
+
 </style>
