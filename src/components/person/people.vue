@@ -90,8 +90,8 @@
                         </el-col>
                         <el-col :span="6">
                           <div class="pull-right">
-                            <el-button type="text">房间历史</el-button><br>
-                            <el-button type="text">添加记录</el-button>
+                            <history-record :roomId="room.id"></history-record>
+
                           </div>
                         </el-col>
                       </el-row>
@@ -186,11 +186,13 @@
 
 <script>
 import AddPerson from '@/components/person/dialog/add-person'
+import HistoryRecord from '@/components/person/dialog/history-record'
 
 export default {
   name: 'people',
   components: {
-    AddPerson
+    AddPerson,
+    HistoryRecord
   },
   data () {
     return {
