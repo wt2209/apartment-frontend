@@ -41,21 +41,13 @@
                           </el-select>
                         </el-col>
                         <el-col :md="3" :xs="24">
-                          <el-input v-model="item.fees" placeholder="金额"></el-input>
+                          <el-input v-model="item.amount" placeholder="金额"></el-input>
                         </el-col>
                         <el-col :md="6" :xs="24">
-                          <el-input v-model="item.remark" placeholder="费用说明"></el-input>
+                          <el-input v-model="item.description" placeholder="费用说明"></el-input>
                         </el-col>
-                        <el-col :md="3" :xs="24" v-if="item.type  && billTypes[item.type]['late_fees_on']">
-                          <el-input v-model="item.late_fees_base" placeholder="滞纳金基数"></el-input>
-                        </el-col>
-                        <!-- <el-col :md="3" :xs="24" v-if="item.type  && billTypes[item.type]['late_fees_on']">
-                          <el-input v-model="item.late_rate" placeholder="滞纳金费率">
-                            <template slot="append">%</template>
-                          </el-input>
-                        </el-col> -->
-                        <el-col :md="3" :xs="24" v-if="item.type  && billTypes[item.type]['late_fees_on']">
-                          <el-date-picker style="width:170px;" v-model="item.late_at" type="date" placeholder="滞纳金开始日"></el-date-picker>
+                        <el-col :md="6" :xs="24">
+                          <el-input v-model="item.remark" placeholder="备注"></el-input>
                         </el-col>
                         <el-col :md="2" :xs="24">
                           <el-button v-if="index!=0" @click.prevent="removeItem(item)">删除</el-button>
@@ -71,32 +63,6 @@
                     <el-switch v-model="form.charge" active-color="#00a65a"></el-switch>
                   </p>
                 </div>
-                <!-- <div class="config col-md-12">
-                  <p>总费用：<span>{{ fees }}</span></p>
-                  <p>上缴总费用：<span>{{ turn_in_fees }}</span></p>
-                  <p>
-                    是否收取滞纳金：
-                    <el-switch v-model="form.late_fees_on" on-color="#13ce66" on-value="1" off-value="0" on-text="收取" off-text="不收"></el-switch>
-                  </p>
-                  <div v-if="form.late_fees_on == 1">
-                    <p>
-                      滞纳金基数：
-                      <span style="width:200px;display:inline-block;">
-                        <el-input placeholder="金额" v-model="form.late_fees_base"></el-input>
-                      </span>
-                    </p>
-                    <p>
-                      滞纳金费率：
-                      <span style="width:200px;display:inline-block;">
-                        <el-input placeholder="费用说明" v-model="late_rate">
-                          <template slot="append">%</template>
-                        </el-input>
-                      </span>
-                      （只精确到0.1%）
-                    </p>
-                    <p>滞纳金开始计算日：<span><el-date-picker type="date" placeholder="选择日期" style="width:200px;"></el-date-picker></span></p>
-                  </div>
-                </div> -->
               </div>
               <div class="panel-footer">
                 <button type="button" class="btn btn-success" id="submitButton"  @click="submit()">{{ buttonMsg }}</button>
@@ -127,10 +93,9 @@ export default {
         charge:false,
         items: [{
           type: '',
-          fees: '',
-          remark: '',
-          late_fees_base:'',
-          late_at:''
+          amount: '',
+          description: '',
+          remark:''
         }]
       }
     }
@@ -154,10 +119,9 @@ export default {
     addNewItem(){
       this.form.items.push({
         type: null,
-        fees: null,
-        remark: null,
-        late_fees_base:null,
-        late_at:null
+        amount: null,
+        description:null,
+        remark: null
       })
     },
     removeItem(item) {

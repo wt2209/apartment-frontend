@@ -66,8 +66,8 @@ export default {
       this.loading = true
       this.http.get({
         url: 'room-types',
-        success: (res) => {
-          this.types = res.data
+        success: (data) => {
+          this.types = data
         },
         done: () => {
           this.loading = false

@@ -25,7 +25,7 @@
             :autosize="{minRows: 1, maxRows: 4}" ></el-input>
         </el-col>
         <el-col :md="5" :xs="24">
-          <el-button type="success" size="small" @click="onSubmit">新增记录</el-button>
+          <el-button type="success" size="small" @click="addRecord">新增记录</el-button>
         </el-col>
       </el-row>
       <!-- <div slot="footer" class="dialog-footer">
@@ -68,7 +68,9 @@ export default {
       this.dialogVisible = true
 
     },
+    addRecord() {
 
+    },
 
 
     getRoom(roomId) {
@@ -94,12 +96,12 @@ export default {
       this.http.post({
         url: 'people',
         data: this.person,
-        success:(result) => {
+        success:(data) => {
           let ret = {
             index: this.roomIndex,
             person: this.person
           }
-          ret.person.id = result.data.id
+          ret.person.id = data.id
           this.checkinFormVisible = false
           this.$emit('success', ret)
         },

@@ -49,10 +49,11 @@ export default {
       this.http.post({
         url: 'login',
         data: this.form,
-        success: (result) => {
-            sessionStorage.setItem('access_token', result.token)
-            sessionStorage.setItem('username', this.form.name)
-            this.$router.push(this.$route.query.redirect || '/')
+        success: (data) => {
+          console.log(data.token)
+          sessionStorage.setItem('access_token', data.token)
+          sessionStorage.setItem('username', this.form.name)
+          this.$router.push(this.$route.query.redirect || '/')
         },
         errorMsg: '用户名或密码错误',
         done:()=>{

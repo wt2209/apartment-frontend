@@ -154,14 +154,14 @@ export default {
       this.getRoomLoading = true
       this.http.get({
         url:'rooms/' + roomId,
-        success: (result) => {
-          this.person.room_id = result.data.id
-          this.personMeta.room = result.data.display_name
-          this.personMeta.room_type = result.data.type.name
+        success: (data) => {
+          this.person.room_id = data.id
+          this.personMeta.room = data.display_name
+          this.personMeta.room_type = data.type.name
           // this.personMeta.has_contract = result.data.type.has_contract
           // TODO
           this.personMeta.has_contract = true
-          this.personMeta.is_single = result.data.type.is_single
+          this.personMeta.is_single = data.type.is_single
         },
         done: ()=>{
           this.getRoomLoading = false
@@ -173,12 +173,12 @@ export default {
       this.http.post({
         url: 'people',
         data: this.person,
-        success:(result) => {
+        success:(data) => {
           let ret = {
             index: this.roomIndex,
             person: this.person
           }
-          ret.person.id = result.data.id
+          ret.person.id = data.id
           this.checkinFormVisible = false
           this.$emit('success', ret)
         },

@@ -24,33 +24,37 @@ const result = {
                 data: obj.data
               })
               .then(function(response) {
-                obj.success && obj.success(response.data)
-                if (obj.successMsg != undefined) {
-                  Vue.prototype.$message({
-                    message: obj.successMsg,
-                    type: 'success'
-                  });
+                console.log(response)
+                if (response.data.code == 0) {
+                  obj.success && obj.success(response.data.data)
+                  if (obj.successMsg != undefined) {
+                    Vue.prototype.$message({
+                      message: obj.successMsg,
+                      type: 'success'
+                    });
+                  }
+                } else {
+                  obj.error && obj.error(error.response)
+                  Vue.prototype.$notify.error({
+                    title: '错误: ' + response.data.msg,
+                    message: '错误代码：' + response.data.code,
+                    duration: 0
+                  })
                 }
                 // 不管请求成功与否，都会执行
                 obj.done && obj.done()
               })
               .catch((error) => {
                 if (error) {
-                  obj.error && obj.error(error.response)
                   let errorCode = 0
-                  let message = ''
                   if (error.response && error.response.status) {
                     errorCode = error.response.status
-                    if (error.response.data.error) {
-                      message = error.response.data.error
-                    }
                   }
                   Vue.prototype.$notify.error({
-                    title: '错误: ' + (obj.errorMsg || message || error.message),
+                    title: '错误: 程序运行错误！',
                     message: '错误代码：' + errorCode,
                     duration: 0
                   })
-                  obj.done && obj.done()
                 }
               })
       }

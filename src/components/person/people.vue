@@ -235,15 +235,15 @@ export default {
       this.http.get({
         url: 'people',
         params: params,
-        success: (result) => {
-          if (result.data.length == 0) {
+        success: (data) => {
+          if (data.data.length == 0) {
             this.noDataMsg = '没有找到相关人员'
           } else {
             this.noDataMsg = ''
           }
-          this.rooms = result.data
-          this.peopleCount = result.meta.peopleCount
-          this.roomCount = result.meta.roomCount
+          this.rooms = data.data
+          this.peopleCount = data.meta.peopleCount
+          this.roomCount = data.meta.roomCount
         },
         done: ()=>{
           this.loading = false
@@ -288,11 +288,11 @@ export default {
         this.roomStructureLoading = true
         this.http.get({
           url: 'room-structure',
-          success: (result) => {
-            this.roomStructure = result.data
+          success: (data) => {
+            this.roomStructure = data
             this.roomStructureLoading = false
             $('.el-cascader').trigger('click')
-            sessionStorage.setItem('room-structure', JSON.stringify(result.data))
+            sessionStorage.setItem('room-structure', JSON.stringify(data))
           }
         })
       } else {
